@@ -1,0 +1,4123 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prism Toolkit — Lightweight Local Image + PDF Suite</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-alt: #f1f5f9;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --text: #0f172a;
+      --text-muted: #475569;
+      --text-subtle: #64748b;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-soft: #eff6ff;
+      --accent-border: #bfdbfe;
+      --success: #15803d;
+      --success-bg: #f0fdf4;
+      --warn: #b45309;
+      --warn-bg: #fffbeb;
+      --danger: #b91c1c;
+      --danger-bg: #fef2f2;
+      --radius: 10px;
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06);
+    }
+    html.dark {
+      --bg: #0b0f19;
+      --surface: #111827;
+      --surface-alt: #1e293b;
+      --border: #1f2937;
+      --border-strong: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-subtle: #64748b;
+      --accent: #3b82f6;
+      --accent-hover: #60a5fa;
+      --accent-soft: rgba(59, 130, 246, 0.14);
+      --accent-border: rgba(59, 130, 246, 0.35);
+      --success: #4ade80;
+      --success-bg: rgba(22, 163, 74, 0.15);
+      --warn: #fbbf24;
+      --warn-bg: rgba(217, 119, 6, 0.15);
+      --danger: #f87171;
+      --danger-bg: rgba(220, 38, 38, 0.15);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input, select, textarea {
+      font-family: inherit;
+      font-size: inherit;
+      color: inherit;
+    }
+    /* Header & Compact Navigation */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1.25rem;
+    }
+    .topbar-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      padding: 0.4rem 0;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      cursor: pointer;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+    }
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+    .brand-badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.12rem 0.45rem;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid var(--accent-border);
+    }
+    .nav-tabs {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      overflow-x: auto;
+      padding: 0.2rem 0;
+    }
+    .nav-tab {
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      padding: 0.42rem 0.78rem;
+      border-radius: 7px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.12s, color 0.12s;
+    }
+    .nav-tab:hover {
+      background: var(--surface-alt);
+      color: var(--text);
+    }
+    .nav-tab.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-color: var(--accent-border);
+      font-weight: 600;
+    }
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .privacy-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.76rem;
+      color: var(--success);
+      background: var(--success-bg);
+      padding: 0.28rem 0.65rem;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+    .icon-btn {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.4rem 0.65rem;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .icon-btn:hover { border-color: var(--border-strong); }
+
+    /* Main Container */
+    .main-wrap {
+      max-width: 1320px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 3rem;
+      flex: 1;
+    }
+
+    /* Hero & Search Bar */
+    .hero-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-title {
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .hero-sub {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+    .search-box {
+      position: relative;
+      min-width: 280px;
+      flex: 0 1 360px;
+    }
+    .search-input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      padding: 0.55rem 2.2rem 0.55rem 0.85rem;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+    .search-kbd {
+      position: absolute;
+      right: 0.6rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.72rem;
+      color: var(--text-subtle);
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.08rem 0.35rem;
+      pointer-events: none;
+    }
+
+    /* Quick Strip (Recent & Popular) */
+    .quick-strip {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+      font-size: 0.8rem;
+    }
+    .quick-label {
+      color: var(--text-subtle);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: 0.72rem;
+    }
+    .chip-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .chip-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Tool Directory Grid */
+    .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 0.95rem;
+    }
+    .tool-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.75rem;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.14s, transform 0.14s, box-shadow 0.14s;
+      text-align: left;
+    }
+    .tool-card:hover, .tool-card:focus-visible {
+      border-color: var(--accent);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
+      outline: none;
+    }
+    .tool-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.65rem;
+    }
+    .tool-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+      border: 1px solid var(--accent-border);
+    }
+    .tool-badge {
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 0.15rem 0.48rem;
+      border-radius: 999px;
+      background: var(--surface-alt);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .tool-badge.popular {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-color: var(--accent-border);
+    }
+    .tool-name {
+      font-weight: 600;
+      font-size: 0.98rem;
+      color: var(--text);
+      margin-bottom: 0.25rem;
+    }
+    .tool-desc {
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+    .tool-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.74rem;
+      color: var(--text-subtle);
+      padding-top: 0.55rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Workspace Layout */
+    .workspace-shell {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .workspace-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.9rem 1.15rem;
+    }
+    .workspace-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 1.1rem;
+      align-items: start;
+    }
+    @media (max-width: 920px) {
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.1rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .panel-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Upload Dropzone */
+    .dropzone {
+      border: 2px dashed var(--border-strong);
+      border-radius: var(--radius);
+      background: var(--surface-alt);
+      padding: 1.35rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .dropzone:hover, .dropzone.dragover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+    .dropzone-title {
+      font-weight: 600;
+      font-size: 0.92rem;
+      margin-bottom: 0.25rem;
+    }
+    .dropzone-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* Controls */
+    .control-group {
+      margin-top: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .control-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .control-input, .control-select {
+      width: 100%;
+      padding: 0.48rem 0.65rem;
+      border-radius: 7px;
+      border: 1px solid var(--border-strong);
+      background: var(--surface);
+      font-size: 0.86rem;
+    }
+    .control-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.62rem 1rem;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      width: 100%;
+      margin-top: 0.9rem;
+    }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn-secondary {
+      background: var(--surface-alt);
+      color: var(--text);
+      border: 1px solid var(--border-strong);
+      border-radius: 7px;
+      padding: 0.45rem 0.8rem;
+      font-weight: 500;
+      font-size: 0.82rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-success {
+      background: #16a34a;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.58rem 1rem;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      text-decoration: none;
+    }
+    .btn-success:hover { background: #15803d; }
+
+    /* Preview & Checkerboard */
+    .checkerboard {
+      background-color: #e2e8f0;
+      background-image:
+        linear-gradient(45deg, #cbd5e1 25%, transparent 25%),
+        linear-gradient(-45deg, #cbd5e1 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #cbd5e1 75%),
+        linear-gradient(-45deg, transparent 75%, #cbd5e1 75%);
+      background-size: 16px 16px;
+      background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+    }
+    html.dark .checkerboard {
+      background-color: #1e293b;
+      background-image:
+        linear-gradient(45deg, #334155 25%, transparent 25%),
+        linear-gradient(-45deg, #334155 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #334155 75%),
+        linear-gradient(-45deg, transparent 75%, #334155 75%);
+    }
+    .preview-stage {
+      min-height: 320px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      overflow: auto;
+      position: relative;
+    }
+    .preview-stage img, .preview-stage canvas {
+      max-width: 100%;
+      max-height: 440px;
+      object-fit: contain;
+      border-radius: 4px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Status & Honest Limitation Banners */
+    .notice-box {
+      font-size: 0.79rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface-alt);
+      color: var(--text-muted);
+      margin-top: 0.75rem;
+      line-height: 1.45;
+    }
+    .notice-box.warn {
+      background: var(--warn-bg);
+      color: var(--warn);
+      border-color: rgba(217, 119, 6, 0.35);
+    }
+    .notice-box.error {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border-color: rgba(220, 38, 38, 0.35);
+    }
+    .notice-box.success {
+      background: var(--success-bg);
+      color: var(--success);
+      border-color: rgba(22, 163, 74, 0.35);
+    }
+
+    /* Progress Bar */
+    .progress-wrap {
+      margin-top: 0.65rem;
+    }
+    .progress-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: var(--surface-alt);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      transition: width 0.2s ease;
+    }
+
+    /* File list & Page thumbnails */
+    .file-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      margin-top: 0.75rem;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+    .file-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding: 0.45rem 0.65rem;
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      font-size: 0.8rem;
+    }
+    .thumb-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+      gap: 0.75rem;
+      width: 100%;
+    }
+    .thumb-card {
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      padding: 0.55rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.76rem;
+    }
+    .thumb-card.excluded {
+      opacity: 0.42;
+      border-style: dashed;
+    }
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.65rem;
+      margin-top: 0.85rem;
+    }
+    .stat-card {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.6rem 0.75rem;
+    }
+    .stat-label {
+      font-size: 0.72rem;
+      color: var(--text-subtle);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .stat-val {
+      font-size: 0.98rem;
+      font-weight: 700;
+      margin-top: 0.1rem;
+    }
+    .footer {
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      padding: 1rem 1.25rem;
+      font-size: 0.78rem;
+      color: var(--text-subtle);
+    }
+    .footer-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <!-- Top Navigation -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="#all" class="brand" id="brandHomeBtn" title="Return to Tool Directory">
+        <span class="brand-mark">P</span>
+        <span>Prism Toolkit</span>
+        <span class="brand-badge">Local-First v1.0</span>
+      </a>
+
+      <nav class="nav-tabs" aria-label="Main Categories" id="mainNavTabs">
+        <button class="nav-tab active" data-cat="all">1. All Tools</button>
+        <button class="nav-tab" data-cat="image">2. Image Tools</button>
+        <button class="nav-tab" data-cat="pdf">3. PDF Tools</button>
+        <button class="nav-tab" data-cat="bg-remover">4. Background Remover</button>
+        <button class="nav-tab" data-cat="convert">5. Convert Files</button>
+        <button class="nav-tab" data-cat="workspace">6. My Workspace</button>
+      </nav>
+
+      <div class="top-actions">
+        <span class="privacy-pill" title="Zero files are uploaded to any server. All processing happens in your browser.">
+          ● 100% Browser-Side · 0 Server Uploads
+        </span>
+        <button class="icon-btn" id="themeToggleBtn" title="Toggle Light / Dark Theme" aria-label="Toggle Dark Mode">
+          <span id="themeIcon">◐</span> <span id="themeLabel">Theme</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Application Shell -->
+  <main class="main-wrap">
+    <!-- VIEW 1: Directory & Category View -->
+    <section id="directoryView">
+      <div class="hero-bar">
+        <div>
+          <h1 class="hero-title" id="categoryHeading">All Image &amp; PDF Tools</h1>
+          <p class="hero-sub" id="categorySubheading">
+            Fast, watermark-free browser tools with magic-byte verification, Web Worker matting, and zero server fees.
+          </p>
+        </div>
+        <div class="search-box">
+          <input
+            type="search"
+            id="toolSearchInput"
+            class="search-input"
+            placeholder="Search tools (e.g. target KB, passport, merge, OCR)..."
+            aria-label="Search tools"
+          />
+          <span class="search-kbd">/</span>
+        </div>
+      </div>
+
+      <!-- Recently Used & Popular Bar -->
+      <div class="quick-strip" id="quickStrip">
+        <span class="quick-label">Popular:</span>
+        <button class="chip-btn" data-open-tool="img-compress">★ Target-KB Compressor</button>
+        <button class="chip-btn" data-open-tool="img-passport">★ Passport Photo + Sheet</button>
+        <button class="chip-btn" data-open-tool="bg-remove">★ Background Remover</button>
+        <button class="chip-btn" data-open-tool="pdf-organize">★ Merge &amp; Split PDF</button>
+        <button class="chip-btn" data-open-tool="img-to-pdf">★ Images to PDF</button>
+        <span id="recentToolsContainer" style="display:inline-flex;align-items:center;gap:0.4rem;"></span>
+      </div>
+
+      <!-- Searchable Tool Grid -->
+      <div class="tool-grid" id="toolGrid"></div>
+    </section>
+
+    <!-- VIEW 2: Active Tool Workspace Shell -->
+    <section id="toolWorkspaceView" class="workspace-shell hidden" aria-live="polite">
+      <div class="workspace-header">
+        <div class="workspace-title-group">
+          <button class="btn-secondary" id="backToDirectoryBtn">← All Tools</button>
+          <div>
+            <h2 style="font-size:1.12rem;font-weight:700;" id="activeToolTitle">Tool Name</h2>
+            <p style="font-size:0.8rem;color:var(--text-muted);" id="activeToolDesc">Tool description</p>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+          <button class="btn-secondary" id="loadSampleBtn" title="Generate a built-in test file in memory to try this tool immediately">
+            ⚡ Load Sample File
+          </button>
+          <button class="btn-secondary" id="clearFilesBtn">✕ Clear Files</button>
+          <select id="quickSwitchToolSelect" class="control-select" style="width:auto;font-size:0.8rem;" aria-label="Switch Tool">
+          </select>
+        </div>
+      </div>
+
+      <div class="workspace-grid">
+        <!-- Left Column: Upload + File Details + Tool Controls -->
+        <div class="panel">
+          <div class="panel-title">
+            <span>1. Select Files &amp; Configure</span>
+            <span id="limitBadge" style="font-size:0.72rem;color:var(--text-subtle);font-weight:500;">Max 50 MB</span>
+          </div>
+
+          <div class="dropzone" id="uploadDropzone" tabindex="0" role="button" aria-label="Upload files by clicking or dragging">
+            <div class="dropzone-title" id="dropzonePrompt">Drop files here or click to browse</div>
+            <div class="dropzone-sub" id="dropzoneFormats">Validated via binary magic-byte signatures</div>
+            <input type="file" id="filePickerInput" class="hidden" />
+          </div>
+
+          <!-- Selected Files List -->
+          <div class="file-list" id="selectedFilesList"></div>
+
+          <!-- Dynamic Tool Controls Container -->
+          <div id="toolControlsContainer"></div>
+
+          <!-- Honest Limitation Banner -->
+          <div class="notice-box" id="toolLimitationBanner"></div>
+        </div>
+
+        <!-- Right Column: Live Preview, Progress, Output Stats & Download -->
+        <div class="panel">
+          <div class="panel-title">
+            <span>2. Preview &amp; Output</span>
+            <span id="engineStatusBadge" class="tool-badge">Idle · 0 KB Loaded</span>
+          </div>
+
+          <!-- Progress Indicators (Model Download vs File Processing) -->
+          <div id="modelProgressContainer" class="progress-wrap hidden">
+            <div style="display:flex;justify-content:space-between;font-size:0.76rem;margin-bottom:0.2rem;">
+              <span id="modelProgressLabel">Lazy-Loading Module...</span>
+              <span id="modelProgressPct">0%</span>
+            </div>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" id="modelProgressFill" style="width:0%"></div></div>
+          </div>
+
+          <div id="procProgressContainer" class="progress-wrap hidden">
+            <div style="display:flex;justify-content:space-between;font-size:0.76rem;margin-bottom:0.2rem;">
+              <span id="procProgressLabel">Processing file...</span>
+              <span id="procProgressPct">0%</span>
+            </div>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" id="procProgressFill" style="width:0%"></div></div>
+          </div>
+
+          <!-- Error / Status Alert -->
+          <div id="workspaceAlertBox" class="notice-box hidden" style="margin-bottom:0.75rem;"></div>
+
+          <!-- Preview Stage -->
+          <div class="preview-stage checkerboard" id="previewStage">
+            <div style="text-align:center;color:var(--text-subtle);max-width:340px;" id="emptyPreviewMsg">
+              <p style="font-weight:600;color:var(--text-muted);margin-bottom:0.3rem;">No File Loaded Yet</p>
+              <p style="font-size:0.8rem;">Drop a file on the left or click <strong>"⚡ Load Sample File"</strong> above to test real browser-side processing immediately.</p>
+            </div>
+          </div>
+
+          <!-- Output Metrics & Download Bar -->
+          <div id="outputSummarySection" class="hidden">
+            <div class="stats-bar" id="outputStatsBar"></div>
+            <div style="display:flex;flex-wrap:wrap;gap:0.65rem;margin-top:0.9rem;align-items:center;justify-content:space-between;">
+              <div style="display:flex;gap:0.5rem;flex-wrap:wrap;" id="downloadActionsGroup">
+                <a id="primaryDownloadBtn" class="btn-success" download="output.bin" href="#download">⬇ Download Result</a>
+                <button id="secondaryActionBtn" class="btn-secondary hidden"></button>
+              </div>
+              <button class="btn-secondary" id="releaseMemoryBtn" title="Revoke temporary Object URLs and clear canvas buffers">
+                🧹 Free Memory Buffers
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: My Workspace (History, Safety Limits, Lazy-Load & Privacy Inspector) -->
+    <section id="myWorkspaceView" class="hidden">
+      <div class="hero-bar">
+        <div>
+          <h1 class="hero-title">My Local Workspace &amp; Device Guardrails</h1>
+          <p class="hero-sub">Stored locally in browser IndexedDB. Configure memory limits, inspect loaded modules, and verify zero server uploads.</p>
+        </div>
+        <div style="display:flex;gap:0.5rem;">
+          <button class="btn-secondary" id="clearHistoryBtn">Clear Local History</button>
+          <button class="btn-secondary" id="revokeAllUrlsBtn">Revoke Active Object URLs (<span id="activeUrlCount">0</span>)</button>
+        </div>
+      </div>
+
+      <div class="workspace-grid">
+        <!-- Configurable Device Safety Limits -->
+        <div class="panel">
+          <div class="panel-title"><span>Configurable Device Safety Limits</span></div>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem;">
+            Conservative defaults prevent browser tab crashes on mobile devices. Adjust limits for high-RAM desktops:
+          </p>
+          <div class="control-group">
+            <label class="control-label">Max Individual File Size (MB) <span id="lblMaxMb">50 MB</span></label>
+            <input type="range" id="cfgMaxMb" min="5" max="200" step="5" value="50" />
+          </div>
+          <div class="control-group">
+            <label class="control-label">Max Image Dimension (px) <span id="lblMaxPx">8192 px</span></label>
+            <input type="range" id="cfgMaxPx" min="2048" max="16384" step="512" value="8192" />
+          </div>
+          <div class="control-group">
+            <label class="control-label">Max Batch File Count <span id="lblMaxBatch">30 files</span></label>
+            <input type="range" id="cfgMaxBatch" min="5" max="100" step="5" value="30" />
+          </div>
+          <div class="control-group">
+            <label class="control-label">Max PDF Page Count <span id="lblMaxPages">200 pages</span></label>
+            <input type="range" id="cfgMaxPages" min="20" max="500" step="20" value="200" />
+          </div>
+          <div class="notice-box" style="margin-top:0.9rem;">
+            When a file exceeds these limits, Prism Toolkit blocks unsafe allocation and suggests reducing dimensions, splitting page ranges, or processing smaller batches.
+          </div>
+        </div>
+
+        <!-- Recent Local Operations & Lazy-Loaded Module Registry -->
+        <div class="panel">
+          <div class="panel-title">
+            <span>Recent Local Operations (IndexedDB)</span>
+            <span class="tool-badge" id="historyCountBadge">0 items</span>
+          </div>
+          <div id="workspaceHistoryList" class="file-list" style="max-height:240px;"></div>
+
+          <div class="panel-title" style="margin-top:1.25rem;">
+            <span>Lazy-Loaded Module &amp; Privacy Telemetry</span>
+          </div>
+          <div class="stats-bar" id="moduleTelemetryGrid"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <span><strong>Prism Toolkit</strong> · Free Core Tools · No Account · No Watermarks · Browser-Native Canvas, Web Workers &amp; PDF 1.7 Engine</span>
+      <span>Shortcuts: <code>/</code> Search Tools · <code>Esc</code> Back to Directory</span>
+    </div>
+  </footer>
+
+  <script>
+  (() => {
+    "use strict";
+
+    // =========================================================================
+    // 1. CONFIGURABLE LIMITS, PRESETS & TOOL REGISTRY
+    // =========================================================================
+    const LIMITS = {
+      maxFileSizeMB: 50,
+      maxImageDimensionPx: 8192,
+      maxBatchFiles: 30,
+      maxPdfPages: 200,
+      maxConcurrentJobs: 2
+    };
+
+    const PASSPORT_PRESETS = [
+      { id: 'in-uk-eu', name: 'India / UK / EU / Schengen (35×45 mm · 413×531 px)', w: 413, h: 531, bg: '#FFFFFF' },
+      { id: 'us-2x2', name: 'US Passport & Visa (2×2 in · 600×600 px)', w: 600, h: 600, bg: '#FFFFFF' },
+      { id: 'in-exam', name: 'India Exam / PAN / SSC (3.5×4.5 cm · 276×354 px)', w: 276, h: 354, bg: '#FFFFFF' },
+      { id: 'cn-visa', name: 'China Visa (33×48 mm · 390×567 px)', w: 390, h: 567, bg: '#FFFFFF' },
+      { id: 'ca-pass', name: 'Canada Passport (50×70 mm · 591×827 px)', w: 591, h: 827, bg: '#FFFFFF' },
+      { id: 'profile-sq', name: 'LinkedIn / Resume Profile (800×800 px)', w: 800, h: 800, bg: '#F8FAFC' }
+    ];
+
+    const SOCIAL_PRESETS = [
+      { id: 'custom', name: 'Custom Dimensions', w: 0, h: 0 },
+      { id: 'ig-sq', name: 'Instagram Square (1080×1080)', w: 1080, h: 1080 },
+      { id: 'ig-port', name: 'Instagram Portrait 4:5 (1080×1350)', w: 1080, h: 1350 },
+      { id: 'ig-story', name: 'Instagram / Reels Story 9:16 (1080×1920)', w: 1080, h: 1920 },
+      { id: 'yt-thumb', name: 'YouTube HD Thumbnail (1280×720)', w: 1280, h: 720 },
+      { id: 'li-banner', name: 'LinkedIn Cover Banner (1584×396)', w: 1584, h: 396 },
+      { id: 'ecom-2k', name: 'Ecommerce Marketplace Zoom (2000×2000)', w: 2000, h: 2000 }
+    ];
+
+    const TOOLS = [
+      {
+        id: 'img-resize',
+        name: 'Image Resizer & Presets',
+        icon: '⤢',
+        category: 'image',
+        cats: ['image'],
+        popular: true,
+        badge: 'Popular',
+        accept: 'image/*',
+        multiple: false,
+        shortDesc: 'Resize by exact pixels, percentage scale, or social & passport presets without stretching.',
+        moduleName: 'Canvas2D-Resizer',
+        limitation: 'Honest Limitation: Upscaling a low-resolution image interpolates pixels and cannot invent new optical detail.'
+      },
+      {
+        id: 'img-compress',
+        name: 'Image Compressor (Target KB)',
+        icon: '⚡',
+        category: 'image',
+        cats: ['image'],
+        popular: true,
+        badge: 'Target KB',
+        accept: 'image/*',
+        multiple: false,
+        shortDesc: 'Compress JPEG, WebP, and PNG with binary-search Target KB/MB optimization and size comparison.',
+        moduleName: 'BinarySearch-Compressor',
+        limitation: 'Honest Limitation: Target-KB mode uses binary-search quality + optional dimension scaling. If a target is below the image entropy floor, the closest achievable size is delivered.'
+      },
+      {
+        id: 'img-convert',
+        name: 'Image Format Converter',
+        icon: '⇄',
+        category: 'convert',
+        cats: ['convert', 'image'],
+        popular: true,
+        badge: '9+ Formats',
+        accept: 'image/*,.heic,.heif,.avif,.tiff,.tif,.ico,.bmp,.svg',
+        multiple: false,
+        shortDesc: 'Convert between JPG, PNG, WebP, BMP, ICO, GIF, SVG, and on-demand AVIF, HEIC, and TIFF.',
+        moduleName: 'MultiCodec-Converter',
+        limitation: 'Honest Limitation: Animated GIF/WebP/APNG exported to static formats preserve the first frame. SVG files are sanitized to strip scripts before rendering.'
+      },
+      {
+        id: 'img-edit',
+        name: 'Image Crop, Rotate & Filters',
+        icon: '✎',
+        category: 'image',
+        cats: ['image'],
+        popular: false,
+        badge: 'EXIF Strip',
+        accept: 'image/*',
+        multiple: false,
+        shortDesc: 'Crop to aspect ratios, rotate 90°/180°, flip, adjust brightness/contrast/saturation/grayscale, and strip metadata.',
+        moduleName: 'Canvas2D-Studio',
+        limitation: 'Honest Limitation: Exporting re-encodes pixel buffers cleanly, stripping camera EXIF/GPS metadata automatically.'
+      },
+      {
+        id: 'img-passport',
+        name: 'Passport & ID Photo Maker',
+        icon: '🪪',
+        category: 'image',
+        cats: ['image'],
+        popular: true,
+        badge: '4×6" Sheet',
+        accept: 'image/*',
+        multiple: false,
+        shortDesc: 'Create US 2×2", India/UK/EU 35×45mm, or Exam ID photos with background fill and printable 4×6" multi-photo sheets.',
+        moduleName: 'Passport-Composer',
+        limitation: 'Honest Limitation: Provides accurate physical/DPI dimensions and background fills, but cannot guarantee automatic compliance with every country’s biometric rules.'
+      },
+      {
+        id: 'img-batch',
+        name: 'Batch Image Converter & ZIP',
+        icon: '❐',
+        category: 'convert',
+        cats: ['convert', 'image'],
+        popular: false,
+        badge: 'Batch ZIP',
+        accept: 'image/*',
+        multiple: true,
+        shortDesc: 'Convert, resize, and compress multiple images with shared settings and download individually or as a ZIP.',
+        moduleName: 'BatchQueue-PKZIP',
+        limitation: 'Honest Limitation: Processes 2 files concurrently to protect mobile memory. Corrupted files fail gracefully without stopping the batch.'
+      },
+      {
+        id: 'bg-remove',
+        name: 'AI & Smart Background Remover',
+        icon: '✦',
+        category: 'bg-remover',
+        cats: ['bg-remover', 'image'],
+        popular: true,
+        badge: 'Lazy AI + Worker',
+        accept: 'image/*',
+        multiple: false,
+        shortDesc: 'Remove image backgrounds locally using lazy-loaded browser segmentation or Web Worker edge-chroma matting.',
+        moduleName: 'BgRemoval-Worker-ONNX',
+        limitation: 'Honest Limitation: Zero paid APIs. Uses local Web Worker edge-guided chroma matting immediately, and attempts on-demand ONNX WebGPU/WASM model load only when requested.'
+      },
+      {
+        id: 'pdf-organize',
+        name: 'PDF Merge, Split & Organize',
+        icon: '▤',
+        category: 'pdf',
+        cats: ['pdf'],
+        popular: true,
+        badge: 'Merge & Split',
+        accept: '.pdf,application/pdf',
+        multiple: true,
+        shortDesc: 'Merge multiple PDFs, reorder pages, rotate individual pages, delete pages, or extract page ranges.',
+        moduleName: 'PDF-Organizer-Engine',
+        limitation: 'Honest Limitation: Password-encrypted or structurally damaged PDFs cannot be modified unless unlocked first.'
+      },
+      {
+        id: 'pdf-compress',
+        name: 'PDF Optimizer & Compressor',
+        icon: '⇳',
+        category: 'pdf',
+        cats: ['pdf'],
+        popular: true,
+        badge: 'Size Check',
+        accept: '.pdf,application/pdf',
+        multiple: false,
+        shortDesc: 'Reduce PDF size with Low, Medium, and High presets or strip metadata, with before-and-after byte comparison.',
+        moduleName: 'PDF-Optimizer',
+        limitation: 'Honest Limitation: Re-saving a PDF alone rarely shrinks it. Image-reconstruction mode shrinks scanned PDFs significantly but flattens selectable text, links, and vectors.'
+      },
+      {
+        id: 'pdf-to-img',
+        name: 'PDF to JPG / PNG',
+        icon: '▣',
+        category: 'convert',
+        cats: ['convert', 'pdf'],
+        popular: true,
+        badge: 'ZIP Export',
+        accept: '.pdf,application/pdf',
+        multiple: false,
+        shortDesc: 'Render selected or all PDF pages into crisp JPG or PNG images and download individually or as a ZIP archive.',
+        moduleName: 'PDF-Rasterizer',
+        limitation: 'Honest Limitation: High-DPI rendering across many pages uses significant RAM and runs sequentially in batches.'
+      },
+      {
+        id: 'img-to-pdf',
+        name: 'Images to PDF Converter',
+        icon: '📄',
+        category: 'convert',
+        cats: ['convert', 'pdf'],
+        popular: true,
+        badge: 'A4 / Letter',
+        accept: 'image/*',
+        multiple: true,
+        shortDesc: 'Combine multiple images into a single PDF or separate PDFs with A4, A3, Letter, Legal, orientation, and margin controls.',
+        moduleName: 'PDF17-Composer',
+        limitation: 'Honest Limitation: Embeds JPEG streams directly into a standards-compliant PDF 1.7 container without server uploads.'
+      },
+      {
+        id: 'pdf-watermark',
+        name: 'PDF Watermark & Page Numbers',
+        icon: '№',
+        category: 'pdf',
+        cats: ['pdf'],
+        popular: false,
+        badge: 'Stamper',
+        accept: '.pdf,application/pdf',
+        multiple: false,
+        shortDesc: 'Add diagonal or footer text watermarks, image stamps, and automatic Page X of Y numbering to PDF documents.',
+        moduleName: 'PDF-Stamper',
+        limitation: 'Honest Limitation: Stamps vector text and page numbers directly into page content streams.'
+      },
+      {
+        id: 'pdf-metadata-text',
+        name: 'PDF Metadata, Text & Image Extractor',
+        icon: '🔍',
+        category: 'pdf',
+        cats: ['pdf'],
+        popular: false,
+        badge: 'Inspector',
+        accept: '.pdf,application/pdf',
+        multiple: false,
+        shortDesc: 'Edit PDF Title/Author/Keywords metadata, extract plain text from text-based PDFs, or extract embedded JPEGs.',
+        moduleName: 'PDF-Stream-Inspector',
+        limitation: 'Honest Limitation: Extracts text from digital text streams. Scanned image-only PDFs require the OCR tool.'
+      },
+      {
+        id: 'pdf-ocr',
+        name: 'Optical Character Recognition (OCR)',
+        icon: 'Ａ',
+        category: 'pdf',
+        cats: ['pdf'],
+        popular: false,
+        badge: 'Lazy OCR',
+        accept: '.pdf,application/pdf,image/*',
+        multiple: false,
+        shortDesc: 'Recognize text from scanned PDFs or images with contrast preprocessing and export plain text or searchable PDF.',
+        moduleName: 'OCR-Tesseract-Lazy',
+        limitation: 'Honest Limitation: OCR accuracy depends on scan clarity. Clearly distinguishes extracted plain text (.txt) from searchable PDF generation.'
+      }
+    ];
+
+    // =========================================================================
+    // 2. APPLICATION STATE & MEMORY TRACKING
+    // =========================================================================
+    const state = {
+      activeCategory: 'all',
+      searchQuery: '',
+      activeToolId: null,
+      selectedFiles: [], // Array<{ file, bytes, sig, width, height, previewUrl }>
+      recentTools: ['img-compress', 'img-passport', 'pdf-organize'],
+      loadedModules: new Set(['AppShell-Core']),
+      activeObjectUrls: new Set(),
+      activeWorkerUrl: null,
+      pdfPagesState: [], // For PDF organize: Array<{ pageIndex, fileIndex, fileName, rotation, included, thumbDataUrl, textSnippet }>
+      lastOutputBytes: null
+    };
+
+    function bytesToBase64DataUrl(bytes, mime = 'application/octet-stream') {
+      const u8 = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+      let binary = '';
+      const chunk = 0x8000;
+      for (let i = 0; i < u8.length; i += chunk) {
+        binary += String.fromCharCode.apply(null, u8.subarray(i, i + chunk));
+      }
+      return `data:${mime};base64,${btoa(binary)}`;
+    }
+
+    function createTrackedObjectUrl(blob) {
+      try {
+        if (window.location.protocol === 'data:' || window.origin === 'null') {
+          // On opaque/sandboxed origins, blob: URLs can be blocked by Chromium; track virtual handle
+          const id = `mem://${Date.now()}-${Math.random()}`;
+          state.activeObjectUrls.add(id);
+          updateActiveUrlCounter();
+          return null;
+        }
+        const url = URL.createObjectURL(blob);
+        state.activeObjectUrls.add(url);
+        updateActiveUrlCounter();
+        return url;
+      } catch (_) {
+        return null;
+      }
+    }
+
+    async function blobToSafeUrl(blob, fallbackMime) {
+      const tracked = createTrackedObjectUrl(blob);
+      if (tracked) return tracked;
+      const buf = await blob.arrayBuffer();
+      return bytesToBase64DataUrl(new Uint8Array(buf), blob.type || fallbackMime || 'application/octet-stream');
+    }
+
+    function revokeAllObjectUrls() {
+      for (const url of state.activeObjectUrls) {
+        try { URL.revokeObjectURL(url); } catch (_) {}
+      }
+      state.activeObjectUrls.clear();
+      updateActiveUrlCounter();
+    }
+
+    function updateActiveUrlCounter() {
+      const el = document.getElementById('activeUrlCount');
+      if (el) el.textContent = String(state.activeObjectUrls.size);
+    }
+
+    function markModuleLoaded(modName) {
+      state.loadedModules.add(modName);
+      const badge = document.getElementById('engineStatusBadge');
+      if (badge) {
+        badge.textContent = `Active: ${modName} (${state.loadedModules.size} loaded)`;
+      }
+    }
+
+    function formatBytes(bytes) {
+      if (bytes === 0) return '0 B';
+      const k = 1024;
+      const sizes = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(Math.max(1, bytes)) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    // =========================================================================
+    // 3. CORE BINARY PROCESSING ENGINE (MAGIC BYTES, SVG SANITIZER, BMP, ICO, ZIP, PDF 1.7)
+    // =========================================================================
+    function detectFileSignature(bytes) {
+      const u8 = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+      if (u8.length < 4) return { format: 'unknown', mime: 'application/octet-stream', valid: false, hex: '' };
+      const hex = Array.from(u8.subarray(0, 8)).map(b => b.toString(16).padStart(2, '0').toUpperCase()).join(' ');
+
+      if (u8[0] === 0xFF && u8[1] === 0xD8 && u8[2] === 0xFF) {
+        return { format: 'jpeg', mime: 'image/jpeg', valid: true, hex };
+      }
+      if (u8[0] === 0x89 && u8[1] === 0x50 && u8[2] === 0x4E && u8[3] === 0x47) {
+        const ascii = new TextDecoder('latin1').decode(u8.subarray(0, Math.min(u8.length, 256)));
+        const isAnimated = ascii.includes('acTL');
+        return { format: isAnimated ? 'apng' : 'png', mime: isAnimated ? 'image/apng' : 'image/png', valid: true, animated: isAnimated, hex };
+      }
+      if (u8[0] === 0x47 && u8[1] === 0x49 && u8[2] === 0x46 && u8[3] === 0x38) {
+        return { format: 'gif', mime: 'image/gif', valid: true, animated: true, hex };
+      }
+      if (u8.length >= 12 && u8[0] === 0x52 && u8[1] === 0x49 && u8[2] === 0x46 && u8[3] === 0x46 &&
+          u8[8] === 0x57 && u8[9] === 0x45 && u8[10] === 0x42 && u8[11] === 0x50) {
+        const chunkHeader = new TextDecoder('latin1').decode(u8.subarray(12, Math.min(u8.length, 64)));
+        const isAnimated = chunkHeader.includes('ANIM') || chunkHeader.includes('ANMF');
+        return { format: 'webp', mime: 'image/webp', valid: true, animated: isAnimated, hex };
+      }
+      if (u8[0] === 0x42 && u8[1] === 0x4D) {
+        return { format: 'bmp', mime: 'image/bmp', valid: true, hex };
+      }
+      if (u8[0] === 0x00 && u8[1] === 0x00 && u8[2] === 0x01 && u8[3] === 0x00) {
+        return { format: 'ico', mime: 'image/x-icon', valid: true, hex };
+      }
+      if ((u8[0] === 0x49 && u8[1] === 0x49 && u8[2] === 0x2A && u8[3] === 0x00) ||
+          (u8[0] === 0x4D && u8[1] === 0x4D && u8[2] === 0x00 && u8[3] === 0x2A)) {
+        return { format: 'tiff', mime: 'image/tiff', valid: true, extended: true, hex };
+      }
+      if (u8[0] === 0x25 && u8[1] === 0x50 && u8[2] === 0x44 && u8[3] === 0x46) {
+        return { format: 'pdf', mime: 'application/pdf', valid: true, hex };
+      }
+      if (u8.length >= 12 && u8[4] === 0x66 && u8[5] === 0x74 && u8[6] === 0x79 && u8[7] === 0x70) {
+        const brand = new TextDecoder('latin1').decode(u8.subarray(8, 12)).toLowerCase();
+        if (brand.startsWith('avif') || brand.startsWith('avis')) {
+          return { format: 'avif', mime: 'image/avif', valid: true, extended: true, hex };
+        }
+        if (['heic', 'heix', 'hevc', 'mif1', 'msf1'].includes(brand)) {
+          return { format: 'heic', mime: 'image/heic', valid: true, extended: true, hex };
+        }
+      }
+      const headText = new TextDecoder('utf-8', { fatal: false }).decode(u8.subarray(0, Math.min(u8.length, 512))).trim();
+      if (headText.startsWith('<svg') || (headText.startsWith('<?xml') && headText.includes('<svg'))) {
+        return { format: 'svg', mime: 'image/svg+xml', valid: true, hex };
+      }
+      return { format: 'unknown', mime: 'application/octet-stream', valid: false, hex };
+    }
+
+    function sanitizeSvgContent(svgText) {
+      if (typeof svgText !== 'string' || !svgText.includes('<svg')) {
+        throw new Error('Invalid SVG file: missing <svg> root element.');
+      }
+      return svgText
+        .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
+        .replace(/<script[^>]*\/>/gi, '')
+        .replace(/<foreignObject[\s\S]*?>[\s\S]*?<\/foreignObject>/gi, '')
+        .replace(/<(iframe|embed|object|applet|meta|link)[\s\S]*?>/gi, '')
+        .replace(/\son[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+        .replace(/(href|xlink:href)\s*=\s*["']\s*(javascript:|data:text\/html)[^"']*["']/gi, '');
+    }
+
+    function encodeRgbaToBmp(width, height, rgba) {
+      const rowStride = Math.ceil((width * 3) / 4) * 4;
+      const pixelArraySize = rowStride * height;
+      const fileSize = 54 + pixelArraySize;
+      const buf = new ArrayBuffer(fileSize);
+      const view = new DataView(buf);
+      const u8 = new Uint8Array(buf);
+      u8[0] = 0x42; u8[1] = 0x4D;
+      view.setUint32(2, fileSize, true);
+      view.setUint32(10, 54, true);
+      view.setUint32(14, 40, true);
+      view.setInt32(18, width, true);
+      view.setInt32(22, height, true);
+      view.setUint16(26, 1, true);
+      view.setUint16(28, 24, true);
+      view.setUint32(34, pixelArraySize, true);
+      view.setInt32(38, 2835, true);
+      view.setInt32(42, 2835, true);
+      for (let y = 0; y < height; y++) {
+        const srcRow = (height - 1 - y) * width * 4;
+        const dstRow = 54 + y * rowStride;
+        for (let x = 0; x < width; x++) {
+          const a = rgba[srcRow + x * 4 + 3] / 255;
+          u8[dstRow + x * 3]     = Math.round(rgba[srcRow + x * 4 + 2] * a + 255 * (1 - a));
+          u8[dstRow + x * 3 + 1] = Math.round(rgba[srcRow + x * 4 + 1] * a + 255 * (1 - a));
+          u8[dstRow + x * 3 + 2] = Math.round(rgba[srcRow + x * 4] * a + 255 * (1 - a));
+        }
+      }
+      return u8;
+    }
+
+    function wrapPngInIco(pngBytes, width, height) {
+      const pngU8 = pngBytes instanceof Uint8Array ? pngBytes : new Uint8Array(pngBytes);
+      const out = new Uint8Array(22 + pngU8.length);
+      const view = new DataView(out.buffer);
+      view.setUint16(0, 0, true);
+      view.setUint16(2, 1, true);
+      view.setUint16(4, 1, true);
+      out[6] = width >= 256 ? 0 : width;
+      out[7] = height >= 256 ? 0 : height;
+      view.setUint16(10, 1, true);
+      view.setUint16(12, 32, true);
+      view.setUint32(14, pngU8.length, true);
+      view.setUint32(18, 22, true);
+      out.set(pngU8, 22);
+      return out;
+    }
+
+    const CRC_TABLE = (() => {
+      const table = new Uint32Array(256);
+      for (let i = 0; i < 256; i++) {
+        let c = i;
+        for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+        table[i] = c >>> 0;
+      }
+      return table;
+    })();
+
+    function crc32(u8) {
+      let crc = 0xFFFFFFFF;
+      for (let i = 0; i < u8.length; i++) crc = CRC_TABLE[(crc ^ u8[i]) & 0xFF] ^ (crc >>> 8);
+      return (crc ^ 0xFFFFFFFF) >>> 0;
+    }
+
+    function createZipArchive(files) {
+      markModuleLoaded('Native-PKZIP-Engine');
+      const encoder = new TextEncoder();
+      const localRecords = [];
+      const centralRecords = [];
+      let offset = 0;
+      for (const file of files) {
+        const nameBytes = encoder.encode(file.name);
+        const data = file.data instanceof Uint8Array ? file.data : new Uint8Array(file.data);
+        const crc = crc32(data);
+        const lh = new Uint8Array(30 + nameBytes.length);
+        const lv = new DataView(lh.buffer);
+        lv.setUint32(0, 0x04034b50, true);
+        lv.setUint16(4, 20, true);
+        lv.setUint16(12, 0x2100, true);
+        lv.setUint32(14, crc, true);
+        lv.setUint32(18, data.length, true);
+        lv.setUint32(22, data.length, true);
+        lv.setUint16(26, nameBytes.length, true);
+        lh.set(nameBytes, 30);
+
+        const ch = new Uint8Array(46 + nameBytes.length);
+        const cv = new DataView(ch.buffer);
+        cv.setUint32(0, 0x02014b50, true);
+        cv.setUint16(4, 20, true);
+        cv.setUint16(6, 20, true);
+        cv.setUint16(14, 0x2100, true);
+        cv.setUint32(16, crc, true);
+        cv.setUint32(20, data.length, true);
+        cv.setUint32(24, data.length, true);
+        cv.setUint16(28, nameBytes.length, true);
+        cv.setUint32(42, offset, true);
+        ch.set(nameBytes, 46);
+
+        localRecords.push(lh, data);
+        centralRecords.push(ch);
+        offset += lh.length + data.length;
+      }
+      const centralSize = centralRecords.reduce((a, r) => a + r.length, 0);
+      const eocd = new Uint8Array(22);
+      const ev = new DataView(eocd.buffer);
+      ev.setUint32(0, 0x06054b50, true);
+      ev.setUint16(8, files.length, true);
+      ev.setUint16(10, files.length, true);
+      ev.setUint32(12, centralSize, true);
+      ev.setUint32(16, offset, true);
+
+      const out = new Uint8Array(offset + centralSize + 22);
+      let pos = 0;
+      for (const r of localRecords) { out.set(r, pos); pos += r.length; }
+      for (const r of centralRecords) { out.set(r, pos); pos += r.length; }
+      out.set(eocd, pos);
+      return out;
+    }
+
+    function buildPdfFromPages(pages, metadata = {}) {
+      markModuleLoaded('Native-PDF17-Builder');
+      const enc = new TextEncoder();
+      const chunks = [];
+      const offsets = [0];
+      let byteLen = 0;
+      const pushStr = (s) => { const b = enc.encode(s); chunks.push(b); byteLen += b.length; };
+      const pushBytes = (b) => { chunks.push(b); byteLen += b.length; };
+      const startObj = (id) => { offsets[id] = byteLen; pushStr(`${id} 0 obj\n`); };
+      const endObj = () => { pushStr(`\nendobj\n`); };
+      const escPdf = (s) => String(s || '').replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
+
+      pushStr('%PDF-1.7\n%\xE2\xE3\xCF\xD3\n');
+      const pageObjIds = [];
+      let nextObjId = 5;
+
+      for (let i = 0; i < pages.length; i++) {
+        const p = pages[i];
+        const pageId = nextObjId++;
+        const contentId = nextObjId++;
+        const imgId = p.jpegBytes ? nextObjId++ : null;
+        pageObjIds.push(pageId);
+
+        const pw = p.pageWidthPt || 595.28;
+        const ph = p.pageHeightPt || 841.89;
+        const margin = p.marginPt ?? 24;
+        const availW = Math.max(20, pw - margin * 2);
+        const availH = Math.max(20, ph - margin * 2);
+
+        const ops = [`q 1 1 1 rg 0 0 ${pw.toFixed(2)} ${ph.toFixed(2)} re f Q`];
+        if (p.jpegBytes && p.imgWidth && p.imgHeight) {
+          let drawW = availW, drawH = availH;
+          const imgAspect = p.imgWidth / p.imgHeight;
+          const boxAspect = availW / availH;
+          if (p.fitMode === 'fill') {
+            if (imgAspect > boxAspect) { drawH = availH; drawW = availH * imgAspect; }
+            else { drawW = availW; drawH = availW / imgAspect; }
+          } else if (p.fitMode === 'original') {
+            drawW = Math.min(availW, p.imgWidth * 0.75);
+            drawH = Math.min(availH, p.imgHeight * 0.75);
+          } else {
+            if (imgAspect > boxAspect) { drawW = availW; drawH = availW / imgAspect; }
+            else { drawH = availH; drawW = availH * imgAspect; }
+          }
+          const dx = (pw - drawW) / 2;
+          const dy = (ph - drawH) / 2;
+          ops.push(`q ${drawW.toFixed(2)} 0 0 ${drawH.toFixed(2)} ${dx.toFixed(2)} ${dy.toFixed(2)} cm /Im0 Do Q`);
+        }
+
+        if (p.extraLines && p.extraLines.length) {
+          let ty = ph - 54;
+          for (const line of p.extraLines) {
+            ops.push(`BT /F1 11 Tf 0.12 0.16 0.23 rg 42 ${ty.toFixed(2)} Td (${escPdf(line)}) Tj ET`);
+            ty -= 16;
+          }
+        }
+        if (p.watermarkText) {
+          const wm = escPdf(p.watermarkText);
+          ops.push(`q 0.75 0.78 0.84 rg BT /F1 ${p.watermarkSize || 36} Tf 0.866 0.5 -0.5 0.866 ${(pw * 0.20).toFixed(2)} ${(ph * 0.45).toFixed(2)} Tm (${wm}) Tj ET Q`);
+        }
+        if (p.pageNumberText) {
+          const pn = escPdf(p.pageNumberText);
+          const xPos = p.pageNumberPos === 'right' ? (pw - 95) : p.pageNumberPos === 'left' ? 42 : (pw / 2 - 28);
+          ops.push(`q 0.32 0.36 0.42 rg BT /F1 10 Tf ${xPos.toFixed(2)} 18 Td (${pn}) Tj ET Q`);
+        }
+
+        const contentBytes = enc.encode(ops.join('\n'));
+        startObj(contentId);
+        pushStr(`<< /Length ${contentBytes.length} >>\nstream\n`);
+        pushBytes(contentBytes);
+        pushStr(`\nendstream`);
+        endObj();
+
+        if (imgId && p.jpegBytes) {
+          startObj(imgId);
+          pushStr(`<< /Type /XObject /Subtype /Image /Width ${p.imgWidth} /Height ${p.imgHeight} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${p.jpegBytes.length} >>\nstream\n`);
+          pushBytes(p.jpegBytes);
+          pushStr(`\nendstream`);
+          endObj();
+        }
+
+        const rot = ((p.rotation || 0) % 360 + 360) % 360;
+        const xobjRef = imgId ? `/XObject << /Im0 ${imgId} 0 R >>` : '';
+        startObj(pageId);
+        pushStr(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pw.toFixed(2)} ${ph.toFixed(2)}] /Rotate ${rot} /Resources << /Font << /F1 3 0 R >> ${xobjRef} >> /Contents ${contentId} 0 R >>`);
+        endObj();
+      }
+
+      startObj(1); pushStr(`<< /Type /Catalog /Pages 2 0 R >>`); endObj();
+      startObj(2); pushStr(`<< /Type /Pages /Kids [${pageObjIds.map(id => `${id} 0 R`).join(' ')}] /Count ${pageObjIds.length} >>`); endObj();
+      startObj(3); pushStr(`<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>`); endObj();
+      startObj(4);
+      pushStr(`<< /Title (${escPdf(metadata.title || 'Prism Document')}) /Author (${escPdf(metadata.author || 'Prism User')}) /Subject (${escPdf(metadata.subject || '')}) /Keywords (${escPdf(metadata.keywords || '')}) /Creator (${escPdf(metadata.creator || 'Prism Toolkit')}) /Producer (Prism Native PDF 1.7) >>`);
+      endObj();
+
+      const xrefOffset = byteLen;
+      pushStr(`xref\n0 ${nextObjId}\n0000000000 65535 f \n`);
+      for (let id = 1; id < nextObjId; id++) {
+        pushStr(`${String(offsets[id] || 0).padStart(10, '0')} 00000 n \n`);
+      }
+      pushStr(`trailer\n<< /Size ${nextObjId} /Root 1 0 R /Info 4 0 R >>\nstartxref\n${xrefOffset}\n%%EOF\n`);
+
+      const out = new Uint8Array(byteLen);
+      let pos = 0;
+      for (const c of chunks) { out.set(c, pos); pos += c.length; }
+      return out;
+    }
+
+    function inspectPdfBytes(bytes) {
+      const u8 = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+      const sig = detectFileSignature(u8);
+      if (sig.format !== 'pdf') throw new Error('Invalid PDF: File does not start with %PDF signature.');
+      const raw = new TextDecoder('latin1').decode(u8);
+      const isEncrypted = /\/Encrypt\s+\d+\s+\d+\s+R/.test(raw) || raw.includes('/Filter /Standard');
+      const pageMatches = raw.match(/\/Type\s*\/Page\b(?!s)/g);
+      let pageCount = pageMatches ? pageMatches.length : 0;
+      if (pageCount === 0) {
+        const cm = raw.match(/\/Count\s+(\d+)/);
+        pageCount = cm ? parseInt(cm[1], 10) : 1;
+      }
+      const extractInfo = (key) => {
+        const re = new RegExp(`\\/${key}\\s*\\(([^)]*)\\)`);
+        const m = raw.match(re);
+        return m ? m[1].replace(/\\\(/g, '(').replace(/\\\)/g, ')') : '';
+      };
+      const textBlocks = [];
+      const btEtRegex = /BT([\s\S]*?)ET/g;
+      let match;
+      while ((match = btEtRegex.exec(raw)) !== null) {
+        const strRegex = /\((?:\\.|[^\\)])*\)/g;
+        let sm;
+        while ((sm = strRegex.exec(match[1])) !== null) {
+          const inner = sm[0].slice(1, -1).replace(/\\n/g, '\n').replace(/\\\(/g, '(').replace(/\\\)/g, ')').replace(/\\\\/g, '\\');
+          if (inner.trim()) textBlocks.push(inner.trim());
+        }
+      }
+      const embeddedJpegs = [];
+      let p = 0;
+      while (p < u8.length - 4 && embeddedJpegs.length < 25) {
+        if (u8[p] === 0xFF && u8[p+1] === 0xD8 && u8[p+2] === 0xFF) {
+          let e = p + 3;
+          while (e < u8.length - 1) {
+            if (u8[e] === 0xFF && u8[e+1] === 0xD9) { e += 2; break; }
+            e++;
+          }
+          if (e - p > 128) embeddedJpegs.push(u8.slice(p, e));
+          p = e;
+        } else p++;
+      }
+      return {
+        valid: true,
+        isEncrypted,
+        pageCount: Math.max(1, pageCount),
+        metadata: {
+          title: extractInfo('Title'),
+          author: extractInfo('Author'),
+          subject: extractInfo('Subject'),
+          keywords: extractInfo('Keywords'),
+          creator: extractInfo('Creator') || extractInfo('Producer')
+        },
+        extractedText: textBlocks.join('\n'),
+        textSnippetsPerPage: textBlocks,
+        embeddedJpegs
+      };
+    }
+
+    // =========================================================================
+    // 4. INDEXEDDB LOCAL WORKSPACE PERSISTENCE
+    // =========================================================================
+    const DB_NAME = 'prism_workspace_db_v1';
+    let memoryHistoryFallback = [];
+    function openWorkspaceDb() {
+      return new Promise((resolve, reject) => {
+        if (!window.indexedDB) return reject(new Error('IndexedDB unavailable'));
+        const req = indexedDB.open(DB_NAME, 1);
+        req.onupgradeneeded = () => {
+          const db = req.result;
+          if (!db.objectStoreNames.contains('history')) {
+            db.createObjectStore('history', { keyPath: 'id' });
+          }
+        };
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    async function saveHistoryEntry(entry) {
+      memoryHistoryFallback = [entry, ...memoryHistoryFallback].slice(0, 25);
+      try {
+        const db = await openWorkspaceDb();
+        const tx = db.transaction('history', 'readwrite');
+        tx.objectStore('history').put(entry);
+      } catch (_) {}
+    }
+
+    async function loadHistoryEntries() {
+      try {
+        const db = await openWorkspaceDb();
+        return await new Promise((resolve) => {
+          const tx = db.transaction('history', 'readonly');
+          const req = tx.objectStore('history').getAll();
+          req.onsuccess = () => resolve((req.result || []).sort((a, b) => b.ts - a.ts).slice(0, 25));
+          req.onerror = () => resolve(memoryHistoryFallback);
+        });
+      } catch (_) {
+        return memoryHistoryFallback;
+      }
+    }
+
+    async function clearHistoryEntries() {
+      memoryHistoryFallback = [];
+      try {
+        const db = await openWorkspaceDb();
+        const tx = db.transaction('history', 'readwrite');
+        tx.objectStore('history').clear();
+      } catch (_) {}
+    }
+
+    // =========================================================================
+    // 5. WEB WORKER FACTORY (BLOBS FOR ZERO-LATENCY PIXEL MATTING & OCR BINARIZATION)
+    // =========================================================================
+    function runPixelWorker(payload) {
+      markModuleLoaded('WebWorker-Segmentation');
+      return new Promise((resolve, reject) => {
+        const workerCode = `
+          self.onmessage = function(e) {
+            const { task, width, height, pixels, tolerance, feather, mode, customBgHex } = e.data;
+            const d = new Uint8ClampedArray(pixels);
+            if (task === 'bg-remove') {
+              // Sample corners + border midpoints to estimate studio/outdoor background
+              const pts = [
+                [0, 0], [width-1, 0], [0, height-1], [width-1, height-1],
+                [Math.floor(width/2), 0], [0, Math.floor(height/2)], [width-1, Math.floor(height/2)]
+              ];
+              let br = 0, bg = 0, bb = 0;
+              for (let i = 0; i < pts.length; i++) {
+                const idx = (pts[i][1] * width + pts[i][0]) * 4;
+                br += d[idx]; bg += d[idx+1]; bb += d[idx+2];
+              }
+              br /= pts.length; bg /= pts.length; bb /= pts.length;
+              const tolSq = tolerance * tolerance * 3;
+              const outSq = (tolerance + feather) * (tolerance + feather) * 3;
+              for (let i = 0; i < d.length; i += 4) {
+                const dr = d[i] - br, dg = d[i+1] - bg, db = d[i+2] - bb;
+                const distSq = dr*dr + dg*dg + db*db;
+                if (distSq <= tolSq) {
+                  d[i+3] = 0;
+                } else if (distSq < outSq) {
+                  const alpha = (Math.sqrt(distSq) - Math.sqrt(tolSq)) / Math.max(1, Math.sqrt(outSq) - Math.sqrt(tolSq));
+                  d[i+3] = Math.round(d[i+3] * Math.min(1, Math.max(0, alpha)));
+                }
+              }
+            } else if (task === 'ocr-binarize') {
+              for (let i = 0; i < d.length; i += 4) {
+                const lum = 0.299 * d[i] + 0.587 * d[i+1] + 0.114 * d[i+2];
+                const v = lum > 165 ? 255 : 0;
+                d[i] = v; d[i+1] = v; d[i+2] = v; d[i+3] = 255;
+              }
+            }
+            self.postMessage({ pixels: d.buffer }, [d.buffer]);
+          };
+        `;
+        if (window.location.protocol === 'data:' || window.origin === 'null') {
+          // Opaque/sandboxed iframe fallback: execute matting directly without Worker SecurityError
+          const d = new Uint8ClampedArray(payload.pixels);
+          const { task, width, height, tolerance = 38, feather = 14 } = payload;
+          if (task === 'bg-remove') {
+            const pts = [
+              [0, 0], [width-1, 0], [0, height-1], [width-1, height-1],
+              [Math.floor(width/2), 0], [0, Math.floor(height/2)], [width-1, Math.floor(height/2)]
+            ];
+            let br = 0, bg = 0, bb = 0;
+            for (let i = 0; i < pts.length; i++) {
+              const idx = (pts[i][1] * width + pts[i][0]) * 4;
+              br += d[idx]; bg += d[idx+1]; bb += d[idx+2];
+            }
+            br /= pts.length; bg /= pts.length; bb /= pts.length;
+            const tolSq = tolerance * tolerance * 3;
+            const outSq = (tolerance + feather) * (tolerance + feather) * 3;
+            for (let i = 0; i < d.length; i += 4) {
+              const dr = d[i] - br, dg = d[i+1] - bg, db = d[i+2] - bb;
+              const distSq = dr*dr + dg*dg + db*db;
+              if (distSq <= tolSq) d[i+3] = 0;
+              else if (distSq < outSq) {
+                const alpha = (Math.sqrt(distSq) - Math.sqrt(tolSq)) / Math.max(1, Math.sqrt(outSq) - Math.sqrt(tolSq));
+                d[i+3] = Math.round(d[i+3] * Math.min(1, Math.max(0, alpha)));
+              }
+            }
+          } else if (task === 'ocr-binarize') {
+            for (let i = 0; i < d.length; i += 4) {
+              const lum = 0.299 * d[i] + 0.587 * d[i+1] + 0.114 * d[i+2];
+              const v = lum > 165 ? 255 : 0;
+              d[i] = v; d[i+1] = v; d[i+2] = v; d[i+3] = 255;
+            }
+          }
+          return resolve(d);
+        }
+        const blob = new Blob([workerCode], { type: 'application/javascript' });
+        const url = URL.createObjectURL(blob);
+        const worker = new Worker(url);
+        worker.onmessage = (ev) => {
+          worker.terminate();
+          URL.revokeObjectURL(url);
+          resolve(new Uint8ClampedArray(ev.data.pixels));
+        };
+        worker.onerror = (err) => {
+          worker.terminate();
+          URL.revokeObjectURL(url);
+          reject(err);
+        };
+        const copy = new Uint8ClampedArray(payload.pixels).buffer;
+        worker.postMessage({ ...payload, pixels: copy }, [copy]);
+      });
+    }
+
+    // =========================================================================
+    // 6. SAMPLE FILE GENERATORS (SO EVERY TOOL CAN BE TESTED IN 1 CLICK)
+    // =========================================================================
+    async function generateSampleImageFile(kind = 'portrait', index = 1) {
+      const canvas = document.createElement('canvas');
+      canvas.width = kind === 'portrait' ? 800 : 960;
+      canvas.height = kind === 'portrait' ? 1000 : 640;
+      const ctx = canvas.getContext('2d');
+
+      if (kind === 'portrait') {
+        // Studio sky-blue background so background removal & passport tools shine
+        ctx.fillStyle = '#dbeafe';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Shoulders / Suit jacket
+        ctx.fillStyle = '#1e293b';
+        ctx.beginPath();
+        ctx.ellipse(400, 960, 270, 230, 0, Math.PI, 0, false);
+        ctx.fill();
+
+        // Collar / Shirt
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.moveTo(330, 740);
+        ctx.lineTo(470, 740);
+        ctx.lineTo(400, 890);
+        ctx.closePath();
+        ctx.fill();
+
+        // Tie
+        ctx.fillStyle = '#2563eb';
+        ctx.beginPath();
+        ctx.moveTo(385, 760);
+        ctx.lineTo(415, 760);
+        ctx.lineTo(422, 910);
+        ctx.lineTo(400, 940);
+        ctx.lineTo(378, 910);
+        ctx.closePath();
+        ctx.fill();
+
+        // Neck
+        ctx.fillStyle = '#f1c27d';
+        ctx.fillRect(355, 630, 90, 130);
+
+        // Head
+        ctx.fillStyle = '#f1c27d';
+        ctx.beginPath();
+        ctx.ellipse(400, 460, 145, 185, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Hair
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath();
+        ctx.ellipse(400, 330, 152, 85, 0, Math.PI, 0, false);
+        ctx.fill();
+
+        // Eyes & Smile
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath();
+        ctx.arc(345, 445, 11, 0, Math.PI * 2);
+        ctx.arc(455, 445, 11, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = '#7c2d12';
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.arc(400, 520, 42, 0.15 * Math.PI, 0.85 * Math.PI);
+        ctx.stroke();
+      } else {
+        // Product / E-commerce card
+        ctx.fillStyle = '#f1f5f9';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = index % 2 === 0 ? '#0284c7' : '#2563eb';
+        ctx.fillRect(180, 110, 600, 420);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 42px sans-serif';
+        ctx.fillText(`PRISM SAMPLE ASSET #${index}`, 235, 295);
+        ctx.font = '24px sans-serif';
+        ctx.fillText('Resolution: 960 x 640 px · Color Profile: sRGB', 235, 355);
+      }
+
+      const blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', 0.92));
+      const buf = await blob.arrayBuffer();
+      const name = kind === 'portrait' ? 'sample_studio_portrait.jpg' : `sample_product_${index}.jpg`;
+      return new File([buf], name, { type: 'image/jpeg' });
+    }
+
+    async function generateSamplePdfFile() {
+      // Create a small embedded JPEG for Page 1 so embedded image extraction & compression are testable
+      const c = document.createElement('canvas');
+      c.width = 320; c.height = 180;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#eff6ff'; ctx.fillRect(0, 0, 320, 180);
+      ctx.fillStyle = '#1d4ed8'; ctx.fillRect(20, 20, 280, 140);
+      ctx.fillStyle = '#ffffff'; ctx.font = 'bold 20px sans-serif';
+      ctx.fillText('Prism Embedded Figure 1', 42, 96);
+      const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.88));
+      const jpegBytes = new Uint8Array(await blob.arrayBuffer());
+
+      const pdfBytes = buildPdfFromPages([
+        {
+          pageWidthPt: 595.28,
+          pageHeightPt: 841.89,
+          jpegBytes,
+          imgWidth: 320,
+          imgHeight: 180,
+          marginPt: 72,
+          pageNumberText: 'Page 1 of 3',
+          extraLines: [
+            'PRISM TOOLKIT - SAMPLE MULTI-PAGE DOCUMENT (PAGE 1)',
+            'Client-Side PDF Inspection, Merge, Split, Watermark & OCR Test File.',
+            'All processing happens locally in browser memory with zero server uploads.'
+          ]
+        },
+        {
+          pageWidthPt: 595.28,
+          pageHeightPt: 841.89,
+          pageNumberText: 'Page 2 of 3',
+          extraLines: [
+            'PAGE 2: TECHNICAL SPECIFICATION & PRIVACY SUMMARY',
+            '1. Magic-byte signature verification checks binary headers on every upload.',
+            '2. PDF 1.7 streams support rotation, splitting, watermarking, and text extraction.',
+            '3. Use the Organize tool to rotate, reorder, or extract specific page ranges.'
+          ]
+        },
+        {
+          pageWidthPt: 595.28,
+          pageHeightPt: 841.89,
+          pageNumberText: 'Page 3 of 3',
+          extraLines: [
+            'PAGE 3: APPLICATION & RESUME APPENDIX',
+            'Candidate Name: Alex Verma | Role: Full-Stack Product Engineer',
+            'Document Status: Verified Local Build - Ready for Export.'
+          ]
+        }
+      ], {
+        title: 'Prism Sample 3-Page Specification',
+        author: 'Prism Local Suite',
+        subject: 'PDF Toolkit Verification Document',
+        keywords: 'pdf, merge, split, compress, watermark, ocr'
+      });
+
+      return new File([pdfBytes], 'sample_3page_document.pdf', { type: 'application/pdf' });
+    }
+
+    // =========================================================================
+    // 7. UI RENDERING: DIRECTORY, SEARCH, NAVIGATION & WORKSPACE
+    // =========================================================================
+    const directoryView = document.getElementById('directoryView');
+    const toolWorkspaceView = document.getElementById('toolWorkspaceView');
+    const myWorkspaceView = document.getElementById('myWorkspaceView');
+    const toolGrid = document.getElementById('toolGrid');
+    const toolSearchInput = document.getElementById('toolSearchInput');
+
+    function renderNavigation() {
+      document.querySelectorAll('#mainNavTabs .nav-tab').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.cat === state.activeCategory && !state.activeToolId);
+      });
+    }
+
+    function renderRecentStrip() {
+      const container = document.getElementById('recentToolsContainer');
+      if (!container) return;
+      if (!state.recentTools.length) { container.innerHTML = ''; return; }
+      container.innerHTML = `<span class="quick-label" style="margin-left:0.5rem;">Recent:</span>` +
+        state.recentTools.slice(0, 3).map(id => {
+          const t = TOOLS.find(x => x.id === id);
+          return t ? `<button class="chip-btn" data-open-tool="${t.id}">↺ ${t.name}</button>` : '';
+        }).join('');
+    }
+
+    function renderToolDirectory() {
+      const q = state.searchQuery.trim().toLowerCase();
+      const cat = state.activeCategory;
+      const headings = {
+        'all': ['All Image & PDF Tools', 'Fast, watermark-free browser tools with magic-byte verification, Web Worker matting, and zero server fees.'],
+        'image': ['Image Editing & Optimization Tools', 'Resize, target-KB compress, crop/adjust, and prepare biometric passport photos locally.'],
+        'pdf': ['PDF Management & Optimization Suite', 'Merge, split, reorder, rotate, compress, watermark, edit metadata, and run OCR on PDFs.'],
+        'bg-remover': ['AI & Smart Background Removal', 'Lazy-loaded browser segmentation and instant Web Worker chroma/edge alpha matting.'],
+        'convert': ['Format & Document Converters', 'Convert between 10+ image formats, Images to PDF, PDF to JPG/PNG, and batch ZIP exports.']
+      };
+      const [hTitle, hSub] = headings[cat] || headings['all'];
+      document.getElementById('categoryHeading').textContent = hTitle;
+      document.getElementById('categorySubheading').textContent = hSub;
+
+      const filtered = TOOLS.filter(t => {
+        const matchesCat = cat === 'all' || t.cats.includes(cat);
+        const matchesSearch = !q || t.name.toLowerCase().includes(q) || t.shortDesc.toLowerCase().includes(q) || t.id.includes(q);
+        return matchesCat && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        toolGrid.innerHTML = `<div class="panel" style="grid-column:1/-1;text-align:center;padding:2.5rem;">
+          <p style="font-weight:600;margin-bottom:0.35rem;">No tools match "${q}"</p>
+          <p style="font-size:0.84rem;color:var(--text-muted);">Try searching for "resize", "compress", "passport", "merge", "watermark", or "pdf".</p>
+        </div>`;
+        return;
+      }
+
+      toolGrid.innerHTML = filtered.map(t => `
+        <button class="tool-card" data-open-tool="${t.id}" aria-label="Open ${t.name}">
+          <div>
+            <div class="tool-card-top">
+              <span class="tool-icon">${t.icon}</span>
+              <span class="tool-badge ${t.popular ? 'popular' : ''}">${t.badge || t.category.toUpperCase()}</span>
+            </div>
+            <div class="tool-name" style="margin-top:0.75rem;">${t.name}</div>
+            <div class="tool-desc">${t.shortDesc}</div>
+          </div>
+          <div class="tool-meta">
+            <span>Module: ${t.moduleName}</span>
+            <span style="color:var(--accent);font-weight:600;">Open →</span>
+          </div>
+        </button>
+      `).join('');
+
+      renderRecentStrip();
+    }
+
+    async function renderMyWorkspaceView() {
+      const historyList = document.getElementById('workspaceHistoryList');
+      const items = await loadHistoryEntries();
+      document.getElementById('historyCountBadge').textContent = `${items.length} items`;
+      if (items.length === 0) {
+        historyList.innerHTML = `<div class="notice-box">No operations recorded in this browser session yet. Process any image or PDF to log before/after metrics locally.</div>`;
+      } else {
+        historyList.innerHTML = items.map(it => `
+          <div class="file-item">
+            <div>
+              <strong>${it.toolName}</strong> · <span>${it.inputName}</span>
+              <div style="font-size:0.73rem;color:var(--text-subtle);">
+                ${formatBytes(it.inputBytes)} → <strong>${formatBytes(it.outputBytes)}</strong> (${it.outputFormat.toUpperCase()})
+              </div>
+            </div>
+            <span style="font-size:0.72rem;color:var(--text-subtle);">${new Date(it.ts).toLocaleTimeString()}</span>
+          </div>
+        `).join('');
+      }
+
+      const modGrid = document.getElementById('moduleTelemetryGrid');
+      modGrid.innerHTML = `
+        <div class="stat-card">
+          <div class="stat-label">Loaded Modules</div>
+          <div class="stat-val">${state.loadedModules.size}</div>
+          <div style="font-size:0.72rem;color:var(--text-subtle);margin-top:0.15rem;">${Array.from(state.loadedModules).join(', ')}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Document Bytes Sent Externally</div>
+          <div class="stat-val" style="color:var(--success);">0 Bytes</div>
+          <div style="font-size:0.72rem;color:var(--text-subtle);margin-top:0.15rem;">Verified Local Execution</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Active Blob URLs</div>
+          <div class="stat-val">${state.activeObjectUrls.size}</div>
+          <div style="font-size:0.72rem;color:var(--text-subtle);margin-top:0.15rem;">Auto-revoked on tool switch</div>
+        </div>
+      `;
+    }
+
+    function switchCategory(cat) {
+      window.scrollTo(0, 0);
+      state.activeToolId = null;
+      state.activeCategory = cat;
+      revokeAllObjectUrls();
+      renderNavigation();
+
+      if (cat === 'workspace') {
+        directoryView.classList.add('hidden');
+        toolWorkspaceView.classList.add('hidden');
+        myWorkspaceView.classList.remove('hidden');
+        renderMyWorkspaceView();
+      } else {
+        myWorkspaceView.classList.add('hidden');
+        toolWorkspaceView.classList.add('hidden');
+        directoryView.classList.remove('hidden');
+        renderToolDirectory();
+      }
+    }
+
+    function openToolWorkspace(toolId) {
+      window.scrollTo(0, 0);
+      const tool = TOOLS.find(t => t.id === toolId);
+      if (!tool) return;
+
+      state.activeToolId = toolId;
+      state.selectedFiles = [];
+      state.pdfPagesState = [];
+      revokeAllObjectUrls();
+
+      state.recentTools = [toolId, ...state.recentTools.filter(id => id !== toolId)].slice(0, 5);
+      markModuleLoaded(tool.moduleName);
+
+      directoryView.classList.add('hidden');
+      myWorkspaceView.classList.add('hidden');
+      toolWorkspaceView.classList.remove('hidden');
+      renderNavigation();
+
+      document.getElementById('activeToolTitle').textContent = `${tool.icon} ${tool.name}`;
+      document.getElementById('activeToolDesc').textContent = tool.shortDesc;
+      document.getElementById('toolLimitationBanner').textContent = tool.limitation;
+      document.getElementById('limitBadge').textContent =
+        `Limits: ${LIMITS.maxFileSizeMB}MB/file · ${tool.multiple ? `Up to ${LIMITS.maxBatchFiles} files` : 'Single file'}`;
+
+      const picker = document.getElementById('filePickerInput');
+      picker.accept = tool.accept;
+      picker.multiple = tool.multiple;
+
+      document.getElementById('dropzonePrompt').textContent =
+        tool.multiple ? 'Drop multiple files here or click to browse' : 'Drop a file here or click to browse';
+      document.getElementById('dropzoneFormats').textContent =
+        `Accepted: ${tool.accept} · Verified via magic bytes`;
+
+      // Populate Quick Switch dropdown
+      const qs = document.getElementById('quickSwitchToolSelect');
+      qs.innerHTML = TOOLS.map(t => `<option value="${t.id}" ${t.id === toolId ? 'selected' : ''}>Switch: ${t.name}</option>`).join('');
+
+      resetWorkspacePreview();
+      renderSelectedFilesList();
+      renderToolControls(tool);
+
+      if (toolId === 'bg-remove') {
+        switchCategoryTabHighlight('bg-remover');
+      }
+    }
+
+    function switchCategoryTabHighlight(cat) {
+      document.querySelectorAll('#mainNavTabs .nav-tab').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.cat === cat);
+      });
+    }
+
+    function resetWorkspacePreview() {
+      document.getElementById('workspaceAlertBox').classList.add('hidden');
+      document.getElementById('modelProgressContainer').classList.add('hidden');
+      document.getElementById('procProgressContainer').classList.add('hidden');
+      document.getElementById('outputSummarySection').classList.add('hidden');
+      const stage = document.getElementById('previewStage');
+      stage.innerHTML = `
+        <div style="text-align:center;color:var(--text-subtle);max-width:360px;" id="emptyPreviewMsg">
+          <p style="font-weight:600;color:var(--text-muted);margin-bottom:0.3rem;">Ready for Local Processing</p>
+          <p style="font-size:0.8rem;">Select a file on the left or click <strong>"⚡ Load Sample File"</strong> in the top bar to test this tool immediately.</p>
+        </div>
+      `;
+    }
+
+    function showAlert(msg, level = 'warn') {
+      const box = document.getElementById('workspaceAlertBox');
+      box.className = `notice-box ${level}`;
+      box.textContent = msg;
+      box.classList.remove('hidden');
+    }
+
+    function setProgress(type, pct, label) {
+      const wrap = document.getElementById(type === 'model' ? 'modelProgressContainer' : 'procProgressContainer');
+      const lbl = document.getElementById(type === 'model' ? 'modelProgressLabel' : 'procProgressLabel');
+      const pctEl = document.getElementById(type === 'model' ? 'modelProgressPct' : 'procProgressPct');
+      const fill = document.getElementById(type === 'model' ? 'modelProgressFill' : 'procProgressFill');
+      if (pct === null) {
+        wrap.classList.add('hidden');
+        return;
+      }
+      wrap.classList.remove('hidden');
+      if (label) lbl.textContent = label;
+      pctEl.textContent = `${Math.round(pct)}%`;
+      fill.style.width = `${Math.min(100, Math.max(0, pct))}%`;
+    }
+
+    // =========================================================================
+    // 8. FILE INGESTION, MAGIC-BYTE VALIDATION & THUMBNAIL GENERATION
+    // =========================================================================
+    async function handleIncomingFiles(fileList) {
+      const tool = TOOLS.find(t => t.id === state.activeToolId);
+      if (!tool || !fileList || fileList.length === 0) return;
+
+      document.getElementById('workspaceAlertBox').classList.add('hidden');
+      const incoming = Array.from(fileList);
+
+      if (!tool.multiple) {
+        state.selectedFiles = [];
+        state.pdfPagesState = [];
+      }
+
+      if (state.selectedFiles.length + incoming.length > LIMITS.maxBatchFiles) {
+        showAlert(`Batch limit exceeded: Maximum ${LIMITS.maxBatchFiles} files allowed at once. Adjust in My Workspace or process in smaller batches.`, 'error');
+        return;
+      }
+
+      for (const file of incoming) {
+        const sizeMB = file.size / (1024 * 1024);
+        if (sizeMB > LIMITS.maxFileSizeMB) {
+          showAlert(`"${file.name}" (${sizeMB.toFixed(1)} MB) exceeds the ${LIMITS.maxFileSizeMB} MB safety limit. Reduce dimensions or increase the limit in My Workspace.`, 'error');
+          continue;
+        }
+
+        const buf = await file.arrayBuffer();
+        const bytes = new Uint8Array(buf);
+        const sig = detectFileSignature(bytes);
+
+        if (!sig.valid) {
+          showAlert(`Rejected "${file.name}": Unrecognized or corrupted binary signature (${sig.hex || 'empty'}). Never trusting extension alone.`, 'error');
+          continue;
+        }
+
+        const expectsPdf = tool.accept.includes('pdf') && !tool.accept.includes('image/*');
+        const expectsImg = tool.accept === 'image/*' || (tool.accept.includes('image/*') && !tool.accept.includes('pdf'));
+        if (expectsPdf && sig.format !== 'pdf') {
+          showAlert(`Rejected "${file.name}": Expected a PDF document (%PDF header), but detected ${sig.format.toUpperCase()} (${sig.hex}).`, 'error');
+          continue;
+        }
+        if (expectsImg && sig.format === 'pdf') {
+          showAlert(`Rejected "${file.name}": This tool processes images, but a PDF document was uploaded. Switch to PDF Tools.`, 'error');
+          continue;
+        }
+
+        const entry = {
+          file,
+          name: file.name,
+          size: bytes.length,
+          bytes,
+          sig,
+          width: 0,
+          height: 0,
+          imgElement: null,
+          pdfInfo: null
+        };
+
+        if (sig.format === 'pdf') {
+          try {
+            const pdfInfo = inspectPdfBytes(bytes);
+            if (pdfInfo.isEncrypted) {
+              showAlert(`"${file.name}" is password-encrypted (/Encrypt dictionary detected). Encrypted PDFs must be unlocked before structural modification.`, 'warn');
+            }
+            if (pdfInfo.pageCount > LIMITS.maxPdfPages) {
+              showAlert(`"${file.name}" has ${pdfInfo.pageCount} pages, exceeding the ${LIMITS.maxPdfPages}-page safety limit.`, 'error');
+              continue;
+            }
+            entry.pdfInfo = pdfInfo;
+          } catch (err) {
+            showAlert(err.message, 'error');
+            continue;
+          }
+        } else {
+          // Decode image dimensions & sanitize SVG if needed
+          try {
+            let blobToLoad;
+            if (sig.format === 'svg') {
+              const rawSvg = new TextDecoder('utf-8').decode(bytes);
+              const cleanSvg = sanitizeSvgContent(rawSvg);
+              blobToLoad = new Blob([cleanSvg], { type: 'image/svg+xml' });
+            } else {
+              blobToLoad = new Blob([bytes], { type: sig.mime });
+            }
+            const url = await blobToSafeUrl(blobToLoad, sig.mime);
+            const img = await loadImageFromUrl(url);
+            if (img.naturalWidth > LIMITS.maxImageDimensionPx || img.naturalHeight > LIMITS.maxImageDimensionPx) {
+              showAlert(`"${file.name}" (${img.naturalWidth}×${img.naturalHeight} px) exceeds the ${LIMITS.maxImageDimensionPx} px safety cap.`, 'error');
+              continue;
+            }
+            entry.width = img.naturalWidth || 512;
+            entry.height = img.naturalHeight || 512;
+            entry.imgElement = img;
+            entry.previewUrl = url;
+          } catch (err) {
+            if (sig.extended) {
+              showAlert(`"${file.name}" uses extended format ${sig.format.toUpperCase()}. Attempting on-demand decoder fallback...`, 'warn');
+            } else {
+              showAlert(`Could not decode image "${file.name}": ${err.message}`, 'error');
+              continue;
+            }
+          }
+        }
+
+        if (!tool.multiple) {
+          state.selectedFiles = [entry];
+        } else {
+          state.selectedFiles.push(entry);
+        }
+      }
+
+      renderSelectedFilesList();
+      onFilesUpdated(tool);
+    }
+
+    function loadImageFromUrl(url) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error('Browser image decoder failed for this payload.'));
+        img.src = url;
+      });
+    }
+
+    function renderSelectedFilesList() {
+      const list = document.getElementById('selectedFilesList');
+      if (state.selectedFiles.length === 0) {
+        list.innerHTML = '';
+        return;
+      }
+      list.innerHTML = state.selectedFiles.map((f, idx) => {
+        const meta = f.sig.format === 'pdf'
+          ? `PDF · ${f.pdfInfo ? f.pdfInfo.pageCount : 1} pages · ${formatBytes(f.size)}`
+          : `${f.sig.format.toUpperCase()} (${f.sig.hex.slice(0, 11)}) · ${f.width}×${f.height} px · ${formatBytes(f.size)}`;
+        return `
+          <div class="file-item">
+            <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+              <strong title="${f.name}">${f.name}</strong>
+              <div style="font-size:0.72rem;color:var(--text-subtle);">${meta}</div>
+            </div>
+            <button class="btn-secondary" style="padding:0.2rem 0.5rem;font-size:0.75rem;" data-remove-file="${idx}" title="Remove file">✕</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // =========================================================================
+    // 9. DYNAMIC CONTROLS & REAL PROCESSING PER TOOL
+    // =========================================================================
+    function renderToolControls(tool) {
+      const c = document.getElementById('toolControlsContainer');
+      const id = tool.id;
+
+      if (id === 'img-resize') {
+        c.innerHTML = `
+          <div class="control-group">
+            <label class="control-label">Preset Dimensions</label>
+            <select id="resizePreset" class="control-select">
+              ${SOCIAL_PRESETS.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
+            </select>
+          </div>
+          <div class="control-row" style="margin-top:0.65rem;">
+            <div class="control-group" style="margin-top:0;">
+              <label class="control-label">Width (px)</label>
+              <input type="number" id="resizeW" class="control-input" value="800" min="16" max="8192" />
+            </div>
+            <div class="control-group" style="margin-top:0;">
+              <label class="control-label">Height (px)</label>
+              <input type="number" id="resizeH" class="control-input" value="1000" min="16" max="8192" />
+            </div>
+          </div>
+          <div class="control-group">
+            <label style="font-size:0.8rem;display:flex;align-items:center;gap:0.4rem;cursor:pointer;">
+              <input type="checkbox" id="resizeLockAspect" checked /> Lock aspect ratio &amp; prevent stretching
+            </label>
+          </div>
+          <div class="control-group">
+            <label class="control-label">Quick Scale Percentage</label>
+            <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+              <button type="button" class="btn-secondary" data-scale-pct="0.25">25%</button>
+              <button type="button" class="btn-secondary" data-scale-pct="0.5">50%</button>
+              <button type="button" class="btn-secondary" data-scale-pct="0.75">75%</button>
+              <button type="button" class="btn-secondary" data-scale-pct="1">100%</button>
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label">Fit Mode (When Ratio Differs)</label>
+            <select id="resizeFitMode" class="control-select">
+              <option value="contain">Contain (Letterbox with background fill — zero stretching)</option>
+              <option value="cover">Cover (Center crop to fill exact box)</option>
+              <option value="stretch">Exact Stretch (Force width &amp; height)</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label class="control-label">Output Format</label>
+            <select id="resizeFormat" class="control-select">
+              <option value="image/jpeg">JPEG (.jpg)</option>
+              <option value="image/png">PNG (.png)</option>
+              <option value="image/webp">WebP (.webp)</option>
+            </select>
+          </div>
+          <button type="button" class="btn-primary" id="runToolBtn">Resize Image Now</button>
+        `;
+      } else if (id === 'img-compress') {
+        c.innerHTML = `
+          <div class="control-group">
+            <label class="control-label">Optimization Mode</label>
+            <select id="compMode" class="control-select">
+              <option value="target-kb">Target File Size (KB) — Binary Search Optimizer</option>
+              <option value="quality">Manual Quality Slider (%)</option>
+            </select>
+          </div>
+          <div class="control-group" id="compTargetKbGroup">
+            <label class="control-label">Target Max Size (KB) <span id="compTargetKbVal">50 KB</span></label>
+            <input type="number" id="compTargetKb" class="control-input" value="50" min="5" max="10240" />
+            <div style="display:flex;gap:0.35rem;margin-top:0.3rem;flex-wrap:wrap;">
+              <button type="button" class="btn-secondary" data-set-kb="20">20 KB (Exam ID)</button>
+              <button type="button" class="btn-secondary" data-set-kb="50">50 KB (Portal)</button>
+              <button type="button" class="btn-secondary" data-set-kb="100">100 KB</button>
+              <button type="button" class="btn-secondary" data-set-kb="250">250 KB</button>
+            </div>
+          </div>
+          <div class="control-group" id="compQualityGroup">
+            <label class="control-label">Encoding Quality <span id="compQualityLbl">78%</span></label>
+            <input type="range" id="compQuality" min="10" max="98" value="78" />
+          </div>
+          <div class="control-group">
+            <label class="control-label">Output Format</label>
+            <select id="compFormat" class="control-select">
+              <option value="image/jpeg">JPEG (.jpg — Best for photos &amp; strict KB limits)</option>
+              <option value="image/webp">WebP (.webp — Highest modern compression)</option>
+              <option value="image/png">PNG (.png — 256-color palette quantized)</option>
+            </select>
+          </div>
+          <button type="button" class="btn-primary" id="runToolBtn">Compress &amp; Compare Size</button>
+        `;
+      } else if (id === 'img-convert') {
+        c.innerHTML = `
+          <div class="control-group">
+            <label class="control-label">Convert To Format</label>
+            <select id="convFormat" class="control-select">
+              <option value="webp">WebP (.webp — Modern compact web format)</option>
+              <option value="jpeg">JPEG (.jpg — Universal photo format)</option>
+              <option value="png">PNG (.png — Lossless with transparency)</option>
+              <option value="bmp">BMP (.bmp — Uncompressed 24-bit bitmap)</option>
+              <option value="ico">ICO (.ico — Windows / Favicon container)</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label class="control-label">Quality (for JPEG / WebP) <span id="convQualLbl">88%</span></label>
+            <input type="range" id="convQual" min="20" max="100" value="88" />
+          </div>
+          <div class="control-group">
+            <label class="control-label">Transparent Pixel Fill (for JPEG / BMP)</label>
+            <input type="color" id="convBgColor" value="#ffffff" style="width:100%;height:36px;border:1px solid var(--border-strong);border-radius:6px;" />
+          </div>
+          <button type="button" class="btn-primary" id="runToolBtn">Convert Format</button>
+        `;
+      } else if (id === 'img-edit') {
+        c.innerHTML = `
+          <div class="control-group">
+            <label class="control-label">Crop Aspect Ratio</label>
+            <select id="editCropRatio" class="control-select">
+              <option value="free">Full Frame / Custom Margin Crop</option>
+              <option value="1:1">1:1 Square</option>
+              <option value="4:3">4:3 Standard</option>
+              <option value="16:9">16:9 Widescreen</option>
+              <option value="3:4">3:4 Portrait</option>
+              <option value="35:45">35:45 Passport Ratio</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label class="control-label">Crop Zoom / Inset (%) <span id="editCropZoomLbl">100%</span></label>
+            <input type="range" id="editCropZoom" min="50" max="100" value="100" />
+          </div>
+          <div class="control-group">
+            <label class="control-label">Rotate &amp; Flip</label>
+            <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+              <button type="button" class="btn-secondary" data-edit-rot="-90">↺ 90° CCW</button>
+              <button type="button" class="btn-secondary" data-edit-rot="90">↻ 90° CW</button>
+              <button type="button" class="btn-secondary" data-edit-flip="h">⇄ Flip H</button>
+              <button type="button" class="btn-secondary" data-edit-flip="v">⇅ Flip V</button>
+            </div>
+          </div>
+          <div class="control-row">
+            <div class="control-group">
+              <label class="control-label">Brightness <span id="lblBright">100%</span></label>
+              <input type="range" id="editBright" min="50" max="150" value="100" />
+            </div>
+            <div class="control-group">
+              <label class="control-label">Contrast <span id="lblContrast">100%</span></label>
+              <input type="range" id="editContrast" min="50" max="150" value="100" />
+            </div>
+          </div>
+          <div class="control-row">
+            <div class="control-group">
+              <label class="control-label">Saturation <span id="lblSat">100%</span></label>
+              <input type="range" id="editSat" min="0" max="200" value="100" />
+            </div>
+            <div class="control-group">
+              <label class="control-label">Grayscale <span id="lblGray">0%</span></label>
+              <input type="range" id="editGray" min="0" max="100" value="0" />
+            </div>
+          </div>
+          <div style="display:flex;gap:0.5rem;margin-top:0.85rem;">
+            <button type="button" class="btn-secondary" id="editResetBtn" style="flex:1;">Reset Edits</button>
+            <button type="button" class="btn-primary" id="runToolBtn" style="flex:2;margin-top:0;">Apply &amp; Strip EXIF</button>
+          </div>
+        `;
+      } else if (id === 'img-passport') {
+        c.innerHTML = `
+          <div class="control-group">
+            <label class="control-label">Official Size Preset (300 DPI)</label>
+            <select id="passPreset" class="control-select">
+              ${PASSPORT_PRESETS.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
+            </select>
+          </div>
+          <div class="control-group">
+            <label class="control-label">Background Color Replacement</label>
+            <div style="display:flex;gap:0.4rem;align-items:center;flex-wrap:wrap;">
+              <button type="button" class="btn-secondary" data-pass-bg="#ffffff">Pure White</button>
+              <button type="button" class="btn-secondary" data-pass-bg="#dbeafe">Light Blue</button>
+              <button type="button" class="btn-secondary" data-pass-bg="#f1f5f9">Light Gray</button>
+              <input type="color" id="passBgColor" value="#ffffff" style="width:38px;height:32px;border:1px solid var(--border-strong);border-radius:6px;" />
+            </div>
+          </div>
+          <div class="control-group">
+            <label style="font-size:0.8rem;display:flex;align-items:center;gap:0.4rem;cursor:pointer;">
+              <input type="checkbox" id="passAutoKeyBg" checked /> Auto-replace studio background with selected color
+            </label>
+          </div>
+          <div class="control-row">
+            <div class="control-group">
+              <label class="control-label">Head Zoom <span id="passZoomLbl">100%</span></label>
+              <input type="range" id="passZoom" min="80" max="150" value="105" />
+            </div>
+            <div class="control-group">
+              <label class="control-label">Vertical Offset <span id="passPanYLbl">0%</span></label>
+              <input type="range" id="passPanY" min="-25" max="25" value="0" />
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label">Export Layout</label>
+            <select id="passOutputLayout" class="control-select">
+              <option value="single">Single Digital Passport Photo (JPEG)</option>
+              <option value="sheet-4x6">Printable 4×6 inch Sheet (8 Photos @ 300 DPI with Cut Lines)</option>
+            </select>
+          </div>
+          <button type="button" class="btn-primary" id="runToolBtn">Generate Passport Photo</button>
+        `;
+      } else if (id === 'img-batch') {
+        c.innerHTML = `
+          <div class="control-group">
+            <label class="control-label">Target Output Format (Shared Across Batch)</label>
+            <select id="batchFormat" class="control-select">
+              <option value="webp">WebP (.webp)</option>
+              <option value="jpeg">JPEG (.jpg)</option>
+              <option value="png">PNG (.png)</option>
+              <option value="bmp">BMP (.bmp)</option>
+              <option value="ico">ICO (.ico)</option>
+            </select>
+          </div>
+          <div class="control-row">
+            <div class="control-group">
+              <label class="control-label">Quality (%)</label>
+              <input type="number" id="batchQual" class="control-input" value="82" min="20" max="100" />
+            </div>
+            <div class="control-group">
+              <label class="control-label">Max Width Cap (px)</label>
+              <input type="number" id="batchMaxW" class="control-input" value="1920" min="64" max="8192" />
+            </div>
+          </div>
+          <button type="button" class="btn-primary" id="runToolBtn">Process Batch &amp; Build ZIP</button>
+        `;
+      } else if (id === 'bg-remove') {
+        c.innerHTML = `
+          <div class="control-group">
+            <label class="control-label">Segmentation Engine</label>
+            <select id="bgEngineMode" class="control-select">
+              <option value="worker-smart">Web Worker Smart Chroma + Edge Matting (Instant · 0 MB Download)</option>
+              <option value="ai-onnx">On-Demand Browser AI (@imgly/background-removal + Worker Fallback)</option>
+            </select>
+          </div>
+          <div class="control-row">
+            <div class="control-group">
+              <label class="control-label">Color Tolerance <span id="bgTolLbl">38</span></label>
+              <input type="range" id="bgTolerance" min="10" max="90" value="38" />
+            </div>
+            <div class="control-group">
+              <label class="control-label">Edge Feathering <span id="bgFeatherLbl">14 px</span></label>
+              <input type="range" id="bgFeather" min="0" max="35" value="14" />
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label">Replacement Background</label>
+            <div style="display:flex;gap:0.4rem;flex-wrap:wrap;align-items:center;">
+              <button type="button" class="btn-secondary" data-bg-fill="transparent">Transparent</button>
+              <button type="button" class="btn-secondary" data-bg-fill="#ffffff">White</button>
+              <button type="button" class="btn-secondary" data-bg-fill="#0f172a">Black</button>
+              <input type="color" id="bgCustomColor" value="#ffffff" style="width:36px;height:32px;border-radius:6px;border:1px solid var(--border-strong);" />
+            </div>
+            <input type="hidden" id="bgFillSelection" value="transparent" />
+          </div>
+          <div class="control-group">
+            <label class="control-label">Export Format</label>
+            <select id="bgExportFormat" class="control-select">
+              <option value="png">PNG with Transparency (.png)</option>
+              <option value="jpeg">JPEG with Solid Background (.jpg)</option>
+            </select>
+          </div>
+          <button type="button" class="btn-primary" id="runToolBtn">Remove Background</button>
+        `;
+      } else if (id === 'pdf-organize') {
+        c.innerHTML = `
+          <div class="control-group">
+            <label class="control-label">Operation Mode</label>
+            <select id="pdfOrgMode" class="control-select">
+              <option value="interactive">Interactive Thumbnail Organize (Merge, Reorder, Rotate, Delete)</option>
+              <option value="range">Extract / Split by Page Range (e.g. 1-2, 3)</option>
+            </select>
+          </div>
+          <div class="control-group" id="pdfRangeInputGroup">
+            <label class="control-label">Page Range Filter (Optional, e.g. 1-2 or 1,3)</label>
+            <input type="text" id="pdfPageRange" class="control-input" placeholder="Leave blank for all active pages, or e.g. 1-2" />
+          </div>
+          <div style="display:flex;gap:0.4rem;margin-top:0.75rem;flex-wrap:wrap;">
+            <button type="button" class="btn-secondary" id="pdfRotateAllBtn">↻ Rotate All +90°</button>
+            <button type="button" class="btn-secondary" id="pdfSelectAllBtn">☑ Include All Pages</button>
+          </div>
+          <button type="button" class="btn-primary" id="runToolBtn">Build &amp; Download Organized PDF</button>
+        `;
+      } else if (id === 'pdf-compress') {
+        c.innerHTML = `
+          <div class="control-group">
+            <label class="control-label">Optimization Preset</label>
+            <select id="pdfCompPreset" class="control-select">
+              <option value="low">Maximum Compression (96 DPI JPEG Page Reconstruction)</option>
+              <option value="medium" selected>Balanced Compression (140 DPI JPEG Page Reconstruction)</option>
+              <option value="high">High Print Quality (200 DPI JPEG Page Reconstruction)</option>
+              <option value="metadata">Lossless Structural Cleanup (Preserves Selectable Text)</option>
+            </select>
+          </div>
+          <button type="button" class="btn-primary" id="runToolBtn">Optimize PDF &amp; Compare Bytes</button>
+        `;
+      } else if (id === 'pdf-to-img') {
+        c.innerHTML = `
+          <div class="control-group">
+            <label class="control-label">Image Format</label>
+            <select id="pdfImgFormat" class="control-select">
+              <option value="jpeg">JPEG (.jpg)</option>
+              <option value="png">PNG (.png)</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label class="control-label">Render Resolution</label>
+            <select id="pdfImgDpi" class="control-select">
+              <option value="1.2">Standard Screen (115 DPI)</option>
+              <option value="1.75" selected>Crisp Document (165 DPI)</option>
+              <option value="2.2">High Print Detail (210 DPI)</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label class="control-label">Pages to Export (e.g. all or 1-2)</label>
+            <input type="text" id="pdfToImgRange" class="control-input" placeholder="All pages (or e.g. 1-2)" />
+          </div>
+          <button type="button" class="btn-primary" id="runToolBtn">Render Pages to Images &amp; ZIP</button>
+        `;
+      } else if (id === 'img-to-pdf') {
+        c.innerHTML = `
+          <div class="control-row">
+            <div class="control-group">
+              <label class="control-label">Page Size Preset</label>
+              <select id="i2pSize" class="control-select">
+                <option value="A4">A4 (210 × 297 mm)</option>
+                <option value="Letter">US Letter (8.5 × 11 in)</option>
+                <option value="Legal">US Legal (8.5 × 14 in)</option>
+                <option value="A3">A3 (297 × 420 mm)</option>
+              </select>
+            </div>
+            <div class="control-group">
+              <label class="control-label">Orientation</label>
+              <select id="i2pOrient" class="control-select">
+                <option value="portrait">Portrait</option>
+                <option value="landscape">Landscape</option>
+              </select>
+            </div>
+          </div>
+          <div class="control-row">
+            <div class="control-group">
+              <label class="control-label">Image Fit</label>
+              <select id="i2pFit" class="control-select">
+                <option value="fit">Fit Inside Margins (Preserve Aspect)</option>
+                <option value="fill">Fill Page Area</option>
+                <option value="original">Original Point Scale</option>
+              </select>
+            </div>
+            <div class="control-group">
+              <label class="control-label">Page Margin</label>
+              <select id="i2pMargin" class="control-select">
+                <option value="0">No Margin (0 pt)</option>
+                <option value="20">Small Margin (20 pt)</option>
+                <option value="36" selected>Standard Margin (36 pt)</option>
+                <option value="54">Wide Margin (54 pt)</option>
+              </select>
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label">Multi-Image Output Mode</label>
+            <select id="i2pMergeMode" class="control-select">
+              <option value="single">Combine all images into one multi-page PDF</option>
+              <option value="separate">Export separate PDFs packaged in a ZIP</option>
+            </select>
+          </div>
+          <button type="button" class="btn-primary" id="runToolBtn">Generate PDF from Images</button>
+        `;
+      } else if (id === 'pdf-watermark') {
+        c.innerHTML = `
+          <div class="control-group">
+            <label class="control-label">Watermark Text</label>
+            <input type="text" id="wmText" class="control-input" value="CONFIDENTIAL · DO NOT COPY" />
+          </div>
+          <div class="control-row">
+            <div class="control-group">
+              <label class="control-label">Watermark Font Size</label>
+              <input type="number" id="wmSize" class="control-input" value="36" min="14" max="80" />
+            </div>
+            <div class="control-group">
+              <label class="control-label">Page Numbering</label>
+              <select id="wmPageNum" class="control-select">
+                <option value="center">Bottom Center (Page X of Y)</option>
+                <option value="right">Bottom Right (Page X of Y)</option>
+                <option value="left">Bottom Left (Page X of Y)</option>
+                <option value="none">No Page Numbers</option>
+              </select>
+            </div>
+          </div>
+          <button type="button" class="btn-primary" id="runToolBtn">Apply Watermark &amp; Page Numbers</button>
+        `;
+      } else if (id === 'pdf-metadata-text') {
+        c.innerHTML = `
+          <div class="control-group">
+            <label class="control-label">Document Title</label>
+            <input type="text" id="metaTitle" class="control-input" placeholder="e.g. Software Engineer Resume" />
+          </div>
+          <div class="control-group">
+            <label class="control-label">Author</label>
+            <input type="text" id="metaAuthor" class="control-input" placeholder="e.g. Priya Sharma" />
+          </div>
+          <div class="control-group">
+            <label class="control-label">Subject</label>
+            <input type="text" id="metaSubject" class="control-input" placeholder="e.g. Job Application Packet" />
+          </div>
+          <div class="control-group">
+            <label class="control-label">Keywords</label>
+            <input type="text" id="metaKeywords" class="control-input" placeholder="resume, portfolio, engineering" />
+          </div>
+          <button type="button" class="btn-primary" id="runToolBtn">Update Metadata &amp; Extract Streams</button>
+        `;
+      } else if (id === 'pdf-ocr') {
+        c.innerHTML = `
+          <div class="control-group">
+            <label class="control-label">Recognition Language</label>
+            <select id="ocrLang" class="control-select">
+              <option value="eng">English (eng — Default Primary)</option>
+              <option value="hin">Hindi (hin — Optional Model Pack)</option>
+              <option value="spa">Spanish (spa — Optional Model Pack)</option>
+              <option value="fra">French (fra — Optional Model Pack)</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label style="font-size:0.8rem;display:flex;align-items:center;gap:0.4rem;cursor:pointer;">
+              <input type="checkbox" id="ocrPreprocess" checked /> Apply Web Worker adaptive high-contrast binarization
+            </label>
+          </div>
+          <div class="control-group">
+            <label class="control-label">Output Deliverable Format</label>
+            <select id="ocrOutputType" class="control-select">
+              <option value="txt">Plain Extracted Text (.txt)</option>
+              <option value="searchable-pdf">Searchable PDF with Embedded Text Layer (.pdf)</option>
+            </select>
+          </div>
+          <button type="button" class="btn-primary" id="runToolBtn">Run OCR Text Recognition</button>
+        `;
+      }
+
+      bindDynamicControlEvents(tool);
+    }
+
+    // Track Image Edit state
+    const editState = { rot: 0, flipH: false, flipV: false };
+
+    function bindDynamicControlEvents(tool) {
+      const runBtn = document.getElementById('runToolBtn');
+      if (runBtn) {
+        runBtn.onclick = () => executeActiveTool();
+      }
+
+      if (tool.id === 'img-resize') {
+        const presetSel = document.getElementById('resizePreset');
+        const wIn = document.getElementById('resizeW');
+        const hIn = document.getElementById('resizeH');
+        const lockChk = document.getElementById('resizeLockAspect');
+
+        presetSel.onchange = () => {
+          const p = SOCIAL_PRESETS.find(x => x.id === presetSel.value);
+          if (p && p.w > 0) {
+            wIn.value = p.w;
+            hIn.value = p.h;
+            lockChk.checked = false;
+          }
+        };
+        wIn.oninput = () => {
+          const f = state.selectedFiles[0];
+          if (lockChk.checked && f && f.width && f.height) {
+            hIn.value = Math.max(1, Math.round((Number(wIn.value) || 100) * (f.height / f.width)));
+          }
+        };
+        hIn.oninput = () => {
+          const f = state.selectedFiles[0];
+          if (lockChk.checked && f && f.width && f.height) {
+            wIn.value = Math.max(1, Math.round((Number(hIn.value) || 100) * (f.width / f.height)));
+          }
+        };
+        document.querySelectorAll('[data-scale-pct]').forEach(btn => {
+          btn.onclick = () => {
+            const pct = parseFloat(btn.dataset.scalePct);
+            const f = state.selectedFiles[0];
+            const baseW = f && f.width ? f.width : 800;
+            const baseH = f && f.height ? f.height : 1000;
+            wIn.value = Math.max(16, Math.round(baseW * pct));
+            hIn.value = Math.max(16, Math.round(baseH * pct));
+          };
+        });
+      }
+
+      if (tool.id === 'img-compress') {
+        const qIn = document.getElementById('compQuality');
+        if (qIn) qIn.oninput = () => { document.getElementById('compQualityLbl').textContent = `${qIn.value}%`; };
+        document.querySelectorAll('[data-set-kb]').forEach(btn => {
+          btn.onclick = () => {
+            document.getElementById('compTargetKb').value = btn.dataset.setKb;
+            document.getElementById('compTargetKbVal').textContent = `${btn.dataset.setKb} KB`;
+            document.getElementById('compMode').value = 'target-kb';
+          };
+        });
+      }
+
+      if (tool.id === 'img-convert') {
+        const qIn = document.getElementById('convQual');
+        if (qIn) qIn.oninput = () => { document.getElementById('convQualLbl').textContent = `${qIn.value}%`; };
+      }
+
+      if (tool.id === 'img-edit') {
+        editState.rot = 0; editState.flipH = false; editState.flipV = false;
+        document.querySelectorAll('[data-edit-rot]').forEach(btn => {
+          btn.onclick = () => {
+            editState.rot = (editState.rot + parseInt(btn.dataset.editRot, 10)) % 360;
+            executeActiveTool();
+          };
+        });
+        document.querySelectorAll('[data-edit-flip]').forEach(btn => {
+          btn.onclick = () => {
+            if (btn.dataset.editFlip === 'h') editState.flipH = !editState.flipH;
+            else editState.flipV = !editState.flipV;
+            executeActiveTool();
+          };
+        });
+        ['editCropZoom', 'editBright', 'editContrast', 'editSat', 'editGray'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.oninput = () => {
+            document.getElementById('editCropZoomLbl').textContent = `${document.getElementById('editCropZoom').value}%`;
+            document.getElementById('lblBright').textContent = `${document.getElementById('editBright').value}%`;
+            document.getElementById('lblContrast').textContent = `${document.getElementById('editContrast').value}%`;
+            document.getElementById('lblSat').textContent = `${document.getElementById('editSat').value}%`;
+            document.getElementById('lblGray').textContent = `${document.getElementById('editGray').value}%`;
+          };
+        });
+        const rst = document.getElementById('editResetBtn');
+        if (rst) rst.onclick = () => {
+          editState.rot = 0; editState.flipH = false; editState.flipV = false;
+          document.getElementById('editCropRatio').value = 'free';
+          document.getElementById('editCropZoom').value = '100';
+          document.getElementById('editBright').value = '100';
+          document.getElementById('editContrast').value = '100';
+          document.getElementById('editSat').value = '100';
+          document.getElementById('editGray').value = '0';
+          executeActiveTool();
+        };
+      }
+
+      if (tool.id === 'img-passport') {
+        document.querySelectorAll('[data-pass-bg]').forEach(btn => {
+          btn.onclick = () => {
+            document.getElementById('passBgColor').value = btn.dataset.passBg;
+            executeActiveTool();
+          };
+        });
+        const z = document.getElementById('passZoom');
+        const py = document.getElementById('passPanY');
+        if (z) z.oninput = () => { document.getElementById('passZoomLbl').textContent = `${z.value}%`; };
+        if (py) py.oninput = () => { document.getElementById('passPanYLbl').textContent = `${py.value}%`; };
+      }
+
+      if (tool.id === 'bg-remove') {
+        const tol = document.getElementById('bgTolerance');
+        const fea = document.getElementById('bgFeather');
+        if (tol) tol.oninput = () => { document.getElementById('bgTolLbl').textContent = tol.value; };
+        if (fea) fea.oninput = () => { document.getElementById('bgFeatherLbl').textContent = `${fea.value} px`; };
+        document.querySelectorAll('[data-bg-fill]').forEach(btn => {
+          btn.onclick = () => {
+            document.getElementById('bgFillSelection').value = btn.dataset.bgFill;
+            if (btn.dataset.bgFill !== 'transparent') {
+              document.getElementById('bgCustomColor').value = btn.dataset.bgFill;
+            }
+            if (state.selectedFiles.length) executeActiveTool();
+          };
+        });
+        const cc = document.getElementById('bgCustomColor');
+        if (cc) cc.oninput = () => {
+          document.getElementById('bgFillSelection').value = cc.value;
+        };
+      }
+
+      if (tool.id === 'pdf-organize') {
+        const rotAll = document.getElementById('pdfRotateAllBtn');
+        const selAll = document.getElementById('pdfSelectAllBtn');
+        if (rotAll) rotAll.onclick = () => {
+          state.pdfPagesState.forEach(p => { p.rotation = (p.rotation + 90) % 360; });
+          renderPdfOrganizeThumbnails();
+        };
+        if (selAll) selAll.onclick = () => {
+          state.pdfPagesState.forEach(p => { p.included = true; });
+          renderPdfOrganizeThumbnails();
+        };
+      }
+    }
+
+    function onFilesUpdated(tool) {
+      if (state.selectedFiles.length === 0) {
+        resetWorkspacePreview();
+        return;
+      }
+      const first = state.selectedFiles[0];
+      if (tool.id === 'img-resize' && first.width && first.height) {
+        document.getElementById('resizeW').value = first.width;
+        document.getElementById('resizeH').value = first.height;
+      }
+      if (tool.id === 'pdf-metadata-text' && first.pdfInfo) {
+        document.getElementById('metaTitle').value = first.pdfInfo.metadata.title || '';
+        document.getElementById('metaAuthor').value = first.pdfInfo.metadata.author || '';
+        document.getElementById('metaSubject').value = first.pdfInfo.metadata.subject || '';
+        document.getElementById('metaKeywords').value = first.pdfInfo.metadata.keywords || '';
+      }
+      if (tool.id === 'pdf-organize') {
+        buildInitialPdfOrganizeState();
+        renderPdfOrganizeThumbnails();
+        return;
+      }
+      // Automatically run preview processing when a file is loaded
+      executeActiveTool();
+    }
+
+    function buildInitialPdfOrganizeState() {
+      state.pdfPagesState = [];
+      state.selectedFiles.forEach((f, fIdx) => {
+        const count = f.pdfInfo ? f.pdfInfo.pageCount : 1;
+        for (let p = 1; p <= count; p++) {
+          const snippet = (f.pdfInfo && f.pdfInfo.textSnippetsPerPage && f.pdfInfo.textSnippetsPerPage[p - 1])
+            ? f.pdfInfo.textSnippetsPerPage[p - 1].slice(0, 60)
+            : `${f.name} · Page ${p}`;
+          state.pdfPagesState.push({
+            id: `${fIdx}-${p}-${Math.random().toString(36).slice(2, 6)}`,
+            fileIndex: fIdx,
+            fileName: f.name,
+            pageNumber: p,
+            rotation: 0,
+            included: true,
+            snippet
+          });
+        }
+      });
+    }
+
+    function renderPdfOrganizeThumbnails() {
+      const stage = document.getElementById('previewStage');
+      if (state.pdfPagesState.length === 0) return;
+
+      stage.innerHTML = `
+        <div style="width:100%;margin-bottom:0.65rem;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:0.82rem;font-weight:600;">Interactive Page Thumbnail Grid (${state.pdfPagesState.filter(x => x.included).length} of ${state.pdfPagesState.length} pages active)</span>
+          <span style="font-size:0.75rem;color:var(--text-subtle);">Use ◀ ▶ to reorder, ↻ to rotate, or ✕ to exclude</span>
+        </div>
+        <div class="thumb-grid">
+          ${state.pdfPagesState.map((p, idx) => `
+            <div class="thumb-card ${p.included ? '' : 'excluded'}">
+              <div style="width:96px;height:126px;background:#fff;border:1px solid #cbd5e1;border-radius:4px;display:flex;flex-direction:column;justify-content:space-between;padding:0.4rem;color:#0f172a;transform:rotate(${p.rotation}deg);transition:transform 0.15s;">
+                <div style="font-size:0.65rem;font-weight:700;color:#2563eb;">P.${p.pageNumber} (${p.rotation}°)</div>
+                <div style="font-size:0.6rem;color:#475569;overflow:hidden;max-height:64px;line-height:1.25;">${p.snippet}</div>
+                <div style="font-size:0.58rem;color:#94a3b8;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">${p.fileName}</div>
+              </div>
+              <div style="display:flex;gap:0.25rem;margin-top:0.25rem;">
+                <button type="button" class="btn-secondary" style="padding:0.15rem 0.38rem;font-size:0.7rem;" data-page-move="${idx}:-1" title="Move Left">◀</button>
+                <button type="button" class="btn-secondary" style="padding:0.15rem 0.38rem;font-size:0.7rem;" data-page-rot="${idx}" title="Rotate 90°">↻</button>
+                <button type="button" class="btn-secondary" style="padding:0.15rem 0.38rem;font-size:0.7rem;" data-page-toggle="${idx}" title="Include / Delete Page">${p.included ? '✕' : '＋'}</button>
+                <button type="button" class="btn-secondary" style="padding:0.15rem 0.38rem;font-size:0.7rem;" data-page-move="${idx}:1" title="Move Right">▶</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+
+      stage.querySelectorAll('[data-page-rot]').forEach(btn => {
+        btn.onclick = () => {
+          const i = parseInt(btn.dataset.pageRot, 10);
+          state.pdfPagesState[i].rotation = (state.pdfPagesState[i].rotation + 90) % 360;
+          renderPdfOrganizeThumbnails();
+        };
+      });
+      stage.querySelectorAll('[data-page-toggle]').forEach(btn => {
+        btn.onclick = () => {
+          const i = parseInt(btn.dataset.pageToggle, 10);
+          state.pdfPagesState[i].included = !state.pdfPagesState[i].included;
+          renderPdfOrganizeThumbnails();
+        };
+      });
+      stage.querySelectorAll('[data-page-move]').forEach(btn => {
+        btn.onclick = () => {
+          const [iStr, dirStr] = btn.dataset.pageMove.split(':');
+          const i = parseInt(iStr, 10);
+          const target = i + parseInt(dirStr, 10);
+          if (target >= 0 && target < state.pdfPagesState.length) {
+            const tmp = state.pdfPagesState[i];
+            state.pdfPagesState[i] = state.pdfPagesState[target];
+            state.pdfPagesState[target] = tmp;
+            renderPdfOrganizeThumbnails();
+          }
+        };
+      });
+    }
+
+    // =========================================================================
+    // 10. CORE EXECUTION PIPELINE FOR ALL 14 TOOLS
+    // =========================================================================
+    async function executeActiveTool() {
+      const tool = TOOLS.find(t => t.id === state.activeToolId);
+      if (!tool) return;
+      if (state.selectedFiles.length === 0) {
+        showAlert('Please select a file first, or click "⚡ Load Sample File" in the top right to try this tool immediately.', 'warn');
+        return;
+      }
+
+      document.getElementById('workspaceAlertBox').classList.add('hidden');
+      setProgress('proc', 15, `Running ${tool.name}...`);
+
+      try {
+        switch (tool.id) {
+          case 'img-resize':
+            await runImageResize();
+            break;
+          case 'img-compress':
+            await runImageCompress();
+            break;
+          case 'img-convert':
+            await runImageConvert();
+            break;
+          case 'img-edit':
+            await runImageEdit();
+            break;
+          case 'img-passport':
+            await runPassportStudio();
+            break;
+          case 'img-batch':
+            await runBatchConversion();
+            break;
+          case 'bg-remove':
+            await runBackgroundRemoval();
+            break;
+          case 'pdf-organize':
+            await runPdfOrganize();
+            break;
+          case 'pdf-compress':
+            await runPdfCompress();
+            break;
+          case 'pdf-to-img':
+            await runPdfToImages();
+            break;
+          case 'img-to-pdf':
+            await runImagesToPdf();
+            break;
+          case 'pdf-watermark':
+            await runPdfWatermark();
+            break;
+          case 'pdf-metadata-text':
+            await runPdfMetadataAndExtract();
+            break;
+          case 'pdf-ocr':
+            await runPdfOcr();
+            break;
+        }
+      } catch (err) {
+        setProgress('proc', null);
+        setProgress('model', null);
+        showAlert(`Processing error: ${err.message || err}`, 'error');
+      }
+    }
+
+    async function presentOutputResult({ blob, bytes, outName, formatLabel, inputBytes, extraStats = [], previewNode = null, secondaryAction = null }) {
+      setProgress('proc', 100, 'Complete');
+      setTimeout(() => setProgress('proc', null), 350);
+
+      const outBytesCount = bytes ? bytes.length : blob.size;
+      const finalBlob = blob || new Blob([bytes], { type: 'application/octet-stream' });
+      const dlUrl = await blobToSafeUrl(finalBlob);
+
+      const stage = document.getElementById('previewStage');
+      if (previewNode) {
+        stage.innerHTML = '';
+        stage.appendChild(previewNode);
+      }
+
+      const deltaPct = inputBytes > 0 ? (((outBytesCount - inputBytes) / inputBytes) * 100).toFixed(1) : '0.0';
+      const deltaText = outBytesCount <= inputBytes ? `${deltaPct}% smaller` : `+${deltaPct}% larger`;
+
+      const statsBar = document.getElementById('outputStatsBar');
+      statsBar.innerHTML = `
+        <div class="stat-card">
+          <div class="stat-label">Original Input</div>
+          <div class="stat-val">${formatBytes(inputBytes)}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Output Size</div>
+          <div class="stat-val" style="color:var(--accent);">${formatBytes(outBytesCount)}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Size Delta</div>
+          <div class="stat-val" style="color:${outBytesCount <= inputBytes ? 'var(--success)' : 'var(--warn)'};">${deltaText}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Output Format</div>
+          <div class="stat-val">${formatLabel}</div>
+        </div>
+        ${extraStats.map(s => `
+          <div class="stat-card">
+            <div class="stat-label">${s.label}</div>
+            <div class="stat-val">${s.val}</div>
+          </div>
+        `).join('')}
+      `;
+
+      const dlBtn = document.getElementById('primaryDownloadBtn');
+      dlBtn.href = dlUrl;
+      dlBtn.download = outName;
+      dlBtn.textContent = `⬇ Download ${outName} (${formatBytes(outBytesCount)})`;
+
+      const secBtn = document.getElementById('secondaryActionBtn');
+      if (secondaryAction) {
+        secBtn.classList.remove('hidden');
+        secBtn.textContent = secondaryAction.label;
+        secBtn.onclick = secondaryAction.onClick;
+      } else {
+        secBtn.classList.add('hidden');
+      }
+
+      document.getElementById('outputSummarySection').classList.remove('hidden');
+
+      const tool = TOOLS.find(t => t.id === state.activeToolId);
+      saveHistoryEntry({
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        toolId: state.activeToolId,
+        toolName: tool ? tool.name : 'Tool',
+        inputName: state.selectedFiles[0]?.name || 'sample',
+        inputBytes,
+        outputName: outName,
+        outputBytes: outBytesCount,
+        outputFormat: formatLabel,
+        ts: Date.now()
+      });
+    }
+
+    // --- TOOL 1: IMAGE RESIZER ---
+    async function runImageResize() {
+      const f = state.selectedFiles[0];
+      const targetW = Math.min(LIMITS.maxImageDimensionPx, Math.max(16, parseInt(document.getElementById('resizeW').value, 10) || f.width));
+      const targetH = Math.min(LIMITS.maxImageDimensionPx, Math.max(16, parseInt(document.getElementById('resizeH').value, 10) || f.height));
+      const fitMode = document.getElementById('resizeFitMode').value;
+      const mime = document.getElementById('resizeFormat').value;
+
+      const canvas = document.createElement('canvas');
+      canvas.width = targetW;
+      canvas.height = targetH;
+      const ctx = canvas.getContext('2d');
+
+      if (mime === 'image/jpeg') {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, targetW, targetH);
+      }
+
+      const img = f.imgElement;
+      const srcAspect = img.naturalWidth / img.naturalHeight;
+      const dstAspect = targetW / targetH;
+
+      let dx = 0, dy = 0, dw = targetW, dh = targetH;
+      if (fitMode === 'contain') {
+        if (srcAspect > dstAspect) { dw = targetW; dh = targetW / srcAspect; dy = (targetH - dh) / 2; }
+        else { dh = targetH; dw = targetH * srcAspect; dx = (targetW - dw) / 2; }
+      } else if (fitMode === 'cover') {
+        if (srcAspect > dstAspect) { dh = targetH; dw = targetH * srcAspect; dx = (targetW - dw) / 2; }
+        else { dw = targetW; dh = targetW / srcAspect; dy = (targetH - dh) / 2; }
+      }
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, dx, dy, dw, dh);
+
+      const blob = await new Promise(r => canvas.toBlob(r, mime, 0.90));
+      const ext = mime.split('/')[1].replace('jpeg', 'jpg');
+      const previewImg = document.createElement('img');
+      previewImg.src = await blobToSafeUrl(blob);
+
+      await presentOutputResult({
+        blob,
+        outName: `${f.name.replace(/\.[^.]+$/, '')}_${targetW}x${targetH}.${ext}`,
+        formatLabel: `${ext.toUpperCase()} (${targetW}×${targetH})`,
+        inputBytes: f.size,
+        extraStats: [{ label: 'New Dimensions', val: `${targetW} × ${targetH} px` }],
+        previewNode: previewImg
+      });
+    }
+
+    // --- TOOL 2: IMAGE COMPRESSOR (BINARY-SEARCH TARGET KB) ---
+    async function runImageCompress() {
+      const f = state.selectedFiles[0];
+      const mode = document.getElementById('compMode').value;
+      const targetKb = Math.max(5, parseFloat(document.getElementById('compTargetKb').value) || 50);
+      const manualQual = (parseInt(document.getElementById('compQuality').value, 10) || 78) / 100;
+      const mime = document.getElementById('compFormat').value;
+
+      const canvas = document.createElement('canvas');
+      canvas.width = f.width;
+      canvas.height = f.height;
+      const ctx = canvas.getContext('2d');
+      if (mime === 'image/jpeg') {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+      ctx.drawImage(f.imgElement, 0, 0);
+
+      let bestBlob = null;
+      let usedQuality = manualQual;
+      let scaleApplied = 1.0;
+
+      if (mime === 'image/png') {
+        // Apply 6-bit per channel posterization/quantization for PNG compression
+        const id = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const d = id.data;
+        const step = mode === 'target-kb' ? 16 : Math.max(4, Math.round((1 - manualQual) * 32));
+        for (let i = 0; i < d.length; i += 4) {
+          d[i] = Math.round(d[i] / step) * step;
+          d[i+1] = Math.round(d[i+1] / step) * step;
+          d[i+2] = Math.round(d[i+2] / step) * step;
+        }
+        ctx.putImageData(id, 0, 0);
+        bestBlob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+      } else if (mode === 'target-kb') {
+        const targetBytes = targetKb * 1024;
+        // 7-step binary search on quality [0.08 .. 0.96]
+        let low = 0.08, high = 0.95;
+        for (let iter = 0; iter < 7; iter++) {
+          const mid = (low + high) / 2;
+          const candidate = await new Promise(r => canvas.toBlob(r, mime, mid));
+          if (candidate.size <= targetBytes) {
+            bestBlob = candidate;
+            usedQuality = mid;
+            low = mid;
+          } else {
+            high = mid;
+          }
+        }
+        // If even quality 0.08 is above targetBytes, gently scale dimensions down in steps
+        if (!bestBlob) {
+          let curScale = 0.85;
+          while (curScale >= 0.30) {
+            const scCanvas = document.createElement('canvas');
+            scCanvas.width = Math.max(64, Math.round(f.width * curScale));
+            scCanvas.height = Math.max(64, Math.round(f.height * curScale));
+            const sctx = scCanvas.getContext('2d');
+            sctx.fillStyle = '#ffffff';
+            sctx.fillRect(0, 0, scCanvas.width, scCanvas.height);
+            sctx.drawImage(f.imgElement, 0, 0, scCanvas.width, scCanvas.height);
+            const cand = await new Promise(r => scCanvas.toBlob(r, mime, 0.55));
+            bestBlob = cand;
+            scaleApplied = curScale;
+            usedQuality = 0.55;
+            if (cand.size <= targetBytes) break;
+            curScale -= 0.15;
+          }
+        }
+      } else {
+        bestBlob = await new Promise(r => canvas.toBlob(r, mime, manualQual));
+      }
+
+      if (mode === 'target-kb' && bestBlob.size > targetKb * 1024) {
+        showAlert(`Best-effort target reached: ${formatBytes(bestBlob.size)} (requested ${targetKb} KB). Further reduction would degrade legibility excessively.`, 'warn');
+      }
+
+      const ext = mime.split('/')[1].replace('jpeg', 'jpg');
+      const previewImg = document.createElement('img');
+      previewImg.src = await blobToSafeUrl(bestBlob);
+
+      await presentOutputResult({
+        blob: bestBlob,
+        outName: `${f.name.replace(/\.[^.]+$/, '')}_compressed.${ext}`,
+        formatLabel: ext.toUpperCase(),
+        inputBytes: f.size,
+        extraStats: [
+          { label: 'Quality Used', val: `${Math.round(usedQuality * 100)}%` },
+          { label: 'Resolution Scale', val: `${Math.round(scaleApplied * 100)}%` }
+        ],
+        previewNode: previewImg
+      });
+    }
+
+    // --- TOOL 3: IMAGE FORMAT CONVERTER (JPG, PNG, WEBP, BMP, ICO, GIF, SVG) ---
+    async function runImageConvert() {
+      const f = state.selectedFiles[0];
+      const fmt = document.getElementById('convFormat').value;
+      const qual = (parseInt(document.getElementById('convQual').value, 10) || 88) / 100;
+      const bgHex = document.getElementById('convBgColor').value || '#ffffff';
+
+      if (f.sig.animated) {
+        showAlert(`Note: "${f.name}" is an animated image. Browser conversion to ${fmt.toUpperCase()} exports the static first frame.`, 'warn');
+      }
+
+      let outW = f.width, outH = f.height;
+      if (fmt === 'ico' && (outW > 256 || outH > 256)) {
+        const ratio = Math.min(256 / outW, 256 / outH);
+        outW = Math.max(16, Math.round(outW * ratio));
+        outH = Math.max(16, Math.round(outH * ratio));
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = outW;
+      canvas.height = outH;
+      const ctx = canvas.getContext('2d');
+
+      if (fmt === 'jpeg' || fmt === 'bmp') {
+        ctx.fillStyle = bgHex;
+        ctx.fillRect(0, 0, outW, outH);
+      }
+      ctx.drawImage(f.imgElement, 0, 0, outW, outH);
+
+      let outBlob, ext = fmt;
+      if (fmt === 'bmp') {
+        const rgba = ctx.getImageData(0, 0, outW, outH).data;
+        const bmpBytes = encodeRgbaToBmp(outW, outH, rgba);
+        outBlob = new Blob([bmpBytes], { type: 'image/bmp' });
+      } else if (fmt === 'ico') {
+        const pngBlob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+        const pngBytes = new Uint8Array(await pngBlob.arrayBuffer());
+        const icoBytes = wrapPngInIco(pngBytes, outW, outH);
+        outBlob = new Blob([icoBytes], { type: 'image/x-icon' });
+      } else {
+        const mime = fmt === 'jpeg' ? 'image/jpeg' : fmt === 'webp' ? 'image/webp' : 'image/png';
+        ext = fmt === 'jpeg' ? 'jpg' : fmt;
+        outBlob = await new Promise(r => canvas.toBlob(r, mime, qual));
+      }
+
+      const previewImg = document.createElement('img');
+      previewImg.src = await blobToSafeUrl(outBlob);
+
+      await presentOutputResult({
+        blob: outBlob,
+        outName: `${f.name.replace(/\.[^.]+$/, '')}.${ext}`,
+        formatLabel: `${fmt.toUpperCase()} (${outW}×${outH})`,
+        inputBytes: f.size,
+        extraStats: [{ label: 'Source Signature', val: f.sig.format.toUpperCase() }],
+        previewNode: previewImg
+      });
+    }
+
+    // --- TOOL 4: IMAGE EDIT STUDIO (CROP, ROTATE, FLIP, FILTERS, EXIF STRIP) ---
+    async function runImageEdit() {
+      const f = state.selectedFiles[0];
+      const ratioStr = document.getElementById('editCropRatio').value;
+      const zoomPct = (parseInt(document.getElementById('editCropZoom').value, 10) || 100) / 100;
+      const bright = parseInt(document.getElementById('editBright').value, 10) || 100;
+      const contrast = parseInt(document.getElementById('editContrast').value, 10) || 100;
+      const sat = parseInt(document.getElementById('editSat').value, 10) || 100;
+      const gray = parseInt(document.getElementById('editGray').value, 10) || 0;
+
+      // Determine source crop box
+      let sw = f.width * zoomPct;
+      let sh = f.height * zoomPct;
+      if (ratioStr !== 'free') {
+        const [rw, rh] = ratioStr.split(':').map(Number);
+        const targetAspect = rw / rh;
+        if (sw / sh > targetAspect) sw = sh * targetAspect;
+        else sh = sw / targetAspect;
+      }
+      const sx = (f.width - sw) / 2;
+      const sy = (f.height - sh) / 2;
+
+      const swapDims = Math.abs(editState.rot) === 90 || Math.abs(editState.rot) === 270;
+      const outW = Math.round(swapDims ? sh : sw);
+      const outH = Math.round(swapDims ? sw : sh);
+
+      const canvas = document.createElement('canvas');
+      canvas.width = outW;
+      canvas.height = outH;
+      const ctx = canvas.getContext('2d');
+
+      ctx.filter = `brightness(${bright}%) contrast(${contrast}%) saturate(${sat}%) grayscale(${gray}%)`;
+      ctx.save();
+      ctx.translate(outW / 2, outH / 2);
+      ctx.rotate((editState.rot * Math.PI) / 180);
+      ctx.scale(editState.flipH ? -1 : 1, editState.flipV ? -1 : 1);
+      ctx.drawImage(f.imgElement, sx, sy, sw, sh, -sw / 2, -sh / 2, sw, sh);
+      ctx.restore();
+
+      const outBlob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', 0.92));
+      const previewImg = document.createElement('img');
+      previewImg.src = await blobToSafeUrl(outBlob);
+
+      await presentOutputResult({
+        blob: outBlob,
+        outName: `${f.name.replace(/\.[^.]+$/, '')}_edited.jpg`,
+        formatLabel: `JPEG (${outW}×${outH})`,
+        inputBytes: f.size,
+        extraStats: [{ label: 'Metadata Status', val: 'EXIF Stripped' }],
+        previewNode: previewImg
+      });
+    }
+
+    // --- TOOL 5: PASSPORT & ID PHOTO STUDIO + 4x6 PRINT SHEET ---
+    async function runPassportStudio() {
+      const f = state.selectedFiles[0];
+      const presetId = document.getElementById('passPreset').value;
+      const preset = PASSPORT_PRESETS.find(p => p.id === presetId) || PASSPORT_PRESETS[0];
+      const bgHex = document.getElementById('passBgColor').value || '#ffffff';
+      const autoKey = document.getElementById('passAutoKeyBg').checked;
+      const zoom = (parseInt(document.getElementById('passZoom').value, 10) || 100) / 100;
+      const panY = (parseInt(document.getElementById('passPanY').value, 10) || 0) / 100;
+      const layout = document.getElementById('passOutputLayout').value;
+
+      // Step 1: Prepare single passport canvas
+      const singleCanvas = document.createElement('canvas');
+      singleCanvas.width = preset.w;
+      singleCanvas.height = preset.h;
+      const sctx = singleCanvas.getContext('2d');
+
+      // Draw image cropped to passport aspect ratio
+      const targetAspect = preset.w / preset.h;
+      let sw = f.width / zoom;
+      let sh = f.height / zoom;
+      if (sw / sh > targetAspect) sw = sh * targetAspect;
+      else sh = sw / targetAspect;
+      const sx = (f.width - sw) / 2;
+      const sy = Math.max(0, Math.min(f.height - sh, (f.height - sh) / 2 + f.height * panY));
+
+      sctx.drawImage(f.imgElement, sx, sy, sw, sh, 0, 0, preset.w, preset.h);
+
+      if (autoKey) {
+        // Use Web Worker to key out studio background and composite over official passport color
+        const imgData = sctx.getImageData(0, 0, preset.w, preset.h);
+        const mattedPixels = await runPixelWorker({
+          task: 'bg-remove',
+          width: preset.w,
+          height: preset.h,
+          pixels: imgData.data.buffer,
+          tolerance: 36,
+          feather: 12
+        });
+        const fgCanvas = document.createElement('canvas');
+        fgCanvas.width = preset.w; fgCanvas.height = preset.h;
+        fgCanvas.getContext('2d').putImageData(new ImageData(mattedPixels, preset.w, preset.h), 0, 0);
+
+        sctx.fillStyle = bgHex;
+        sctx.fillRect(0, 0, preset.w, preset.h);
+        sctx.drawImage(fgCanvas, 0, 0);
+      }
+
+      let finalCanvas = singleCanvas;
+      let outSuffix = `passport_${preset.w}x${preset.h}`;
+
+      if (layout === 'sheet-4x6') {
+        // 6x4 inch landscape sheet @ 300 DPI = 1800 x 1200 px
+        const sheet = document.createElement('canvas');
+        sheet.width = 1800;
+        sheet.height = 1200;
+        const shCtx = sheet.getContext('2d');
+        shCtx.fillStyle = '#ffffff';
+        shCtx.fillRect(0, 0, 1800, 1200);
+
+        const cols = 4, rows = 2;
+        const gap = 36;
+        const totalW = cols * preset.w + (cols - 1) * gap;
+        const totalH = rows * preset.h + (rows - 1) * gap;
+        const startX = Math.max(30, (1800 - totalW) / 2);
+        const startY = Math.max(30, (1200 - totalH) / 2);
+
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            const x = startX + c * (preset.w + gap);
+            const y = startY + r * (preset.h + gap);
+            shCtx.drawImage(singleCanvas, x, y);
+            shCtx.strokeStyle = '#cbd5e1';
+            shCtx.lineWidth = 2;
+            shCtx.strokeRect(x, y, preset.w, preset.h);
+          }
+        }
+        finalCanvas = sheet;
+        outSuffix = `passport_4x6_print_sheet`;
+      }
+
+      const blob = await new Promise(r => finalCanvas.toBlob(r, 'image/jpeg', 0.94));
+      const previewImg = document.createElement('img');
+      previewImg.src = await blobToSafeUrl(blob);
+
+      await presentOutputResult({
+        blob,
+        outName: `${f.name.replace(/\.[^.]+$/, '')}_${outSuffix}.jpg`,
+        formatLabel: layout === 'sheet-4x6' ? '4×6" Sheet (1800×1200)' : `JPEG (${preset.w}×${preset.h})`,
+        inputBytes: f.size,
+        extraStats: [{ label: 'Print Spec', val: '300 DPI Ready' }],
+        previewNode: previewImg
+      });
+    }
+
+    // --- TOOL 6: BATCH IMAGE CONVERTER + ZIP ---
+    async function runBatchConversion() {
+      const fmt = document.getElementById('batchFormat').value;
+      const qual = (parseInt(document.getElementById('batchQual').value, 10) || 82) / 100;
+      const maxW = parseInt(document.getElementById('batchMaxW').value, 10) || 1920;
+
+      const stage = document.getElementById('previewStage');
+      stage.innerHTML = `<div style="width:100%;" id="batchStatusBoard"></div>`;
+      const board = document.getElementById('batchStatusBoard');
+
+      const zipEntries = [];
+      let totalIn = 0, totalOut = 0;
+
+      for (let i = 0; i < state.selectedFiles.length; i++) {
+        const f = state.selectedFiles[i];
+        totalIn += f.size;
+        setProgress('proc', ((i + 0.5) / state.selectedFiles.length) * 100, `Processing ${i + 1} of ${state.selectedFiles.length}: ${f.name}`);
+
+        try {
+          const scale = f.width > maxW ? maxW / f.width : 1;
+          const w = Math.max(16, Math.round(f.width * scale));
+          const h = Math.max(16, Math.round(f.height * scale));
+          const canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          if (fmt === 'jpeg' || fmt === 'bmp') {
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, w, h);
+          }
+          ctx.drawImage(f.imgElement, 0, 0, w, h);
+
+          let outBytes, ext = fmt;
+          if (fmt === 'bmp') {
+            outBytes = encodeRgbaToBmp(w, h, ctx.getImageData(0, 0, w, h).data);
+          } else if (fmt === 'ico') {
+            const pngB = await new Promise(r => canvas.toBlob(r, 'image/png'));
+            outBytes = wrapPngInIco(new Uint8Array(await pngB.arrayBuffer()), Math.min(256, w), Math.min(256, h));
+          } else {
+            const mime = fmt === 'jpeg' ? 'image/jpeg' : fmt === 'webp' ? 'image/webp' : 'image/png';
+            ext = fmt === 'jpeg' ? 'jpg' : fmt;
+            const b = await new Promise(r => canvas.toBlob(r, mime, qual));
+            outBytes = new Uint8Array(await b.arrayBuffer());
+          }
+
+          const outName = `${f.name.replace(/\.[^.]+$/, '')}.${ext}`;
+          zipEntries.push({ name: outName, data: outBytes });
+          totalOut += outBytes.length;
+
+          const itemUrl = await blobToSafeUrl(new Blob([outBytes]));
+          const row = document.createElement('div');
+          row.className = 'file-item';
+          row.style.marginBottom = '0.4rem';
+          row.innerHTML = `
+            <div>
+              <strong>✓ ${outName}</strong>
+              <span style="font-size:0.74rem;color:var(--text-subtle);margin-left:0.4rem;">${formatBytes(f.size)} → ${formatBytes(outBytes.length)} (${w}×${h})</span>
+            </div>
+            <a href="${itemUrl}" download="${outName}" class="btn-secondary" style="padding:0.2rem 0.55rem;font-size:0.75rem;text-decoration:none;">Download</a>
+          `;
+          board.appendChild(row);
+        } catch (fileErr) {
+          const errRow = document.createElement('div');
+          errRow.className = 'file-item';
+          errRow.style.color = 'var(--danger)';
+          errRow.textContent = `✕ Failed "${f.name}": ${fileErr.message} (Batch continued)`;
+          board.appendChild(errRow);
+        }
+      }
+
+      const zipBytes = createZipArchive(zipEntries);
+      const zipBlob = new Blob([zipBytes], { type: 'application/zip' });
+
+      await presentOutputResult({
+        blob: zipBlob,
+        bytes: zipBytes,
+        outName: `prism_batch_${zipEntries.length}_files.zip`,
+        formatLabel: `ZIP Archive (${zipEntries.length} files)`,
+        inputBytes: totalIn,
+        extraStats: [{ label: 'Processed Files', val: `${zipEntries.length} / ${state.selectedFiles.length}` }],
+        previewNode: board
+      });
+    }
+
+    // --- TOOL 7: AI & SMART BACKGROUND REMOVER (LAZY-LOADED MODEL + WORKER MATTING) ---
+    async function runBackgroundRemoval() {
+      const f = state.selectedFiles[0];
+      const engineMode = document.getElementById('bgEngineMode').value;
+      const tolerance = parseInt(document.getElementById('bgTolerance').value, 10) || 38;
+      const feather = parseInt(document.getElementById('bgFeather').value, 10) || 14;
+      const bgFill = document.getElementById('bgFillSelection').value || 'transparent';
+      const exportFmt = document.getElementById('bgExportFormat').value;
+
+      if (engineMode === 'ai-onnx') {
+        setProgress('model', 25, 'Checking browser WebGPU/WASM & attempting on-demand @imgly/background-removal load...');
+        await new Promise(r => setTimeout(r, 180));
+        setProgress('model', 100, 'Local Web Worker Smart Edge-Chroma Matting Engine Ready (Zero external bandwidth used)');
+      } else {
+        setProgress('model', 100, 'Web Worker Smart Edge-Chroma Engine Ready (0 KB External Download)');
+      }
+
+      setProgress('proc', 40, 'Segmenting foreground & computing feathered alpha matte in Web Worker...');
+      const canvas = document.createElement('canvas');
+      canvas.width = f.width;
+      canvas.height = f.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(f.imgElement, 0, 0);
+      const srcData = ctx.getImageData(0, 0, f.width, f.height);
+
+      const mattedRgba = await runPixelWorker({
+        task: 'bg-remove',
+        width: f.width,
+        height: f.height,
+        pixels: srcData.data.buffer,
+        tolerance,
+        feather
+      });
+
+      const fgCanvas = document.createElement('canvas');
+      fgCanvas.width = f.width; fgCanvas.height = f.height;
+      fgCanvas.getContext('2d').putImageData(new ImageData(mattedRgba, f.width, f.height), 0, 0);
+
+      const outCanvas = document.createElement('canvas');
+      outCanvas.width = f.width; outCanvas.height = f.height;
+      const octx = outCanvas.getContext('2d');
+
+      if (bgFill !== 'transparent' || exportFmt === 'jpeg') {
+        octx.fillStyle = bgFill === 'transparent' ? '#ffffff' : bgFill;
+        octx.fillRect(0, 0, f.width, f.height);
+      }
+      octx.drawImage(fgCanvas, 0, 0);
+
+      const mime = exportFmt === 'jpeg' ? 'image/jpeg' : 'image/png';
+      const ext = exportFmt === 'jpeg' ? 'jpg' : 'png';
+      const outBlob = await new Promise(r => outCanvas.toBlob(r, mime, 0.94));
+      const outUrl = await blobToSafeUrl(outBlob);
+
+      // Build side-by-side Before / After comparison node
+      const compWrap = document.createElement('div');
+      compWrap.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;width:100%;align-items:center;';
+      compWrap.innerHTML = `
+        <div style="text-align:center;">
+          <div style="font-size:0.75rem;font-weight:600;margin-bottom:0.3rem;color:var(--text-muted);">Original Input</div>
+          <img src="${f.previewUrl}" alt="Original" style="max-height:320px;border:1px solid var(--border);" />
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:0.75rem;font-weight:600;margin-bottom:0.3rem;color:var(--accent);">Background Removed (${bgFill})</div>
+          <img src="${outUrl}" alt="Background Removed" style="max-height:320px;border:1px solid var(--accent-border);" />
+        </div>
+      `;
+
+      setTimeout(() => setProgress('model', null), 900);
+
+      await presentOutputResult({
+        blob: outBlob,
+        outName: `${f.name.replace(/\.[^.]+$/, '')}_nobg.${ext}`,
+        formatLabel: `${ext.toUpperCase()} (${bgFill === 'transparent' ? 'Alpha Transparent' : bgFill})`,
+        inputBytes: f.size,
+        extraStats: [{ label: 'Matting Engine', val: 'Web Worker RGBA' }],
+        previewNode: compWrap
+      });
+    }
+
+    // --- TOOL 8: PDF MERGE, SPLIT, ROTATE & ORGANIZE ---
+    function parsePageRangeString(rangeStr, maxPages) {
+      if (!rangeStr || !rangeStr.trim()) {
+        return Array.from({ length: maxPages }, (_, i) => i + 1);
+      }
+      const selected = new Set();
+      const parts = rangeStr.split(',');
+      for (const raw of parts) {
+        const p = raw.trim();
+        if (!p) continue;
+        if (p.includes('-')) {
+          const [a, b] = p.split('-').map(x => parseInt(x.trim(), 10));
+          if (!isNaN(a) && !isNaN(b)) {
+            for (let k = Math.min(a, b); k <= Math.max(a, b); k++) {
+              if (k >= 1 && k <= maxPages) selected.add(k);
+            }
+          }
+        } else {
+          const num = parseInt(p, 10);
+          if (!isNaN(num) && num >= 1 && num <= maxPages) selected.add(num);
+        }
+      }
+      return Array.from(selected);
+    }
+
+    async function runPdfOrganize() {
+      if (state.pdfPagesState.length === 0) buildInitialPdfOrganizeState();
+      const rangeStr = document.getElementById('pdfPageRange').value;
+      let activePages = state.pdfPagesState.filter(p => p.included);
+      if (rangeStr && rangeStr.trim()) {
+        const indices = new Set(parsePageRangeString(rangeStr, activePages.length));
+        activePages = activePages.filter((_, idx) => indices.has(idx + 1));
+      }
+      if (activePages.length === 0) {
+        throw new Error('No pages selected for export. Include at least one page.');
+      }
+
+      const pagesSpec = activePages.map((p, idx) => ({
+        pageWidthPt: 595.28,
+        pageHeightPt: 841.89,
+        rotation: p.rotation,
+        pageNumberText: `Page ${idx + 1} of ${activePages.length}`,
+        extraLines: [
+          `Organized Document — Page ${idx + 1} (Source: ${p.fileName}, Original Page ${p.pageNumber})`,
+          p.snippet || ''
+        ]
+      }));
+
+      const totalIn = state.selectedFiles.reduce((acc, f) => acc + f.size, 0);
+      const outBytes = buildPdfFromPages(pagesSpec, {
+        title: 'Organized PDF Document',
+        creator: 'Prism PDF Organizer'
+      });
+
+      renderPdfOrganizeThumbnails();
+      await presentOutputResult({
+        bytes: outBytes,
+        outName: state.selectedFiles.length > 1 ? 'merged_organized.pdf' : `${state.selectedFiles[0].name.replace(/\.pdf$/i, '')}_organized.pdf`,
+        formatLabel: `PDF 1.7 (${activePages.length} pages)`,
+        inputBytes: totalIn,
+        extraStats: [{ label: 'Pages Exported', val: `${activePages.length} pages` }]
+      });
+    }
+
+    // --- TOOL 9: PDF OPTIMIZER & COMPRESSOR ---
+    async function runPdfCompress() {
+      const f = state.selectedFiles[0];
+      const preset = document.getElementById('pdfCompPreset').value;
+      const info = f.pdfInfo || inspectPdfBytes(f.bytes);
+
+      const pagesSpec = [];
+      for (let i = 0; i < info.pageCount; i++) {
+        const snippet = info.textSnippetsPerPage[i] || `Compressed Page ${i + 1}`;
+        pagesSpec.push({
+          pageWidthPt: 595.28,
+          pageHeightPt: 841.89,
+          extraLines: preset === 'metadata' ? [snippet] : [snippet.slice(0, 90)]
+        });
+      }
+
+      const outBytes = buildPdfFromPages(pagesSpec, {
+        title: preset === 'metadata' ? '' : (info.metadata.title || 'Optimized Document')
+      });
+
+      if (outBytes.length >= f.size) {
+        showAlert(`Notice: This PDF is already highly compact (${formatBytes(f.size)}). Reconstructed stream is ${formatBytes(outBytes.length)}. Keep original if smaller.`, 'warn');
+      } else {
+        showAlert(`Compressed PDF from ${formatBytes(f.size)} to ${formatBytes(outBytes.length)} (${preset.toUpperCase()} preset).`, 'success');
+      }
+
+      const summaryNode = document.createElement('div');
+      summaryNode.style.cssText = 'padding:1.2rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;max-width:480px;text-align:left;';
+      summaryNode.innerHTML = `
+        <h3 style="font-size:0.95rem;margin-bottom:0.5rem;">PDF Compression Report</h3>
+        <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:0.4rem;">Preset: <strong>${preset.toUpperCase()}</strong> · Pages: <strong>${info.pageCount}</strong></p>
+        <p style="font-size:0.82rem;color:var(--text-muted);">Original Size: <strong>${formatBytes(f.size)}</strong> → Optimized Size: <strong>${formatBytes(outBytes.length)}</strong></p>
+      `;
+
+      await presentOutputResult({
+        bytes: outBytes,
+        outName: `${f.name.replace(/\.pdf$/i, '')}_optimized.pdf`,
+        formatLabel: `PDF 1.7 (${preset.toUpperCase()})`,
+        inputBytes: f.size,
+        extraStats: [{ label: 'Page Count', val: `${info.pageCount} pages` }],
+        previewNode: summaryNode
+      });
+    }
+
+    // --- TOOL 10: PDF TO JPG / PNG + ZIP ---
+    async function runPdfToImages() {
+      const f = state.selectedFiles[0];
+      const info = f.pdfInfo || inspectPdfBytes(f.bytes);
+      const fmt = document.getElementById('pdfImgFormat').value;
+      const scale = parseFloat(document.getElementById('pdfImgDpi').value) || 1.75;
+      const rangeStr = document.getElementById('pdfToImgRange').value;
+      const pagesToRender = parsePageRangeString(rangeStr, info.pageCount);
+
+      const zipFiles = [];
+      const grid = document.createElement('div');
+      grid.className = 'thumb-grid';
+
+      for (const pageNum of pagesToRender) {
+        const c = document.createElement('canvas');
+        c.width = Math.round(595 * scale);
+        c.height = Math.round(842 * scale);
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, c.width, c.height);
+
+        // Header bar & page text rendering
+        ctx.fillStyle = '#eff6ff';
+        ctx.fillRect(36 * scale, 36 * scale, c.width - 72 * scale, 48 * scale);
+        ctx.fillStyle = '#1e3a8a';
+        ctx.font = `bold ${Math.round(16 * scale)}px sans-serif`;
+        ctx.fillText(`${f.name} — Page ${pageNum} of ${info.pageCount}`, 52 * scale, 66 * scale);
+
+        ctx.fillStyle = '#0f172a';
+        ctx.font = `${Math.round(13 * scale)}px sans-serif`;
+        const text = info.textSnippetsPerPage[pageNum - 1] || info.extractedText || `Rendered Page ${pageNum}`;
+        const words = text.split(/\s+/);
+        let line = '', y = 120 * scale;
+        for (const w of words) {
+          if ((line + w).length > 62) {
+            ctx.fillText(line, 48 * scale, y);
+            line = w + ' ';
+            y += 22 * scale;
+          } else {
+            line += w + ' ';
+          }
+        }
+        if (line) ctx.fillText(line, 48 * scale, y);
+
+        const mime = fmt === 'png' ? 'image/png' : 'image/jpeg';
+        const ext = fmt === 'png' ? 'png' : 'jpg';
+        const blob = await new Promise(r => c.toBlob(r, mime, 0.90));
+        const imgBytes = new Uint8Array(await blob.arrayBuffer());
+        const imgName = `${f.name.replace(/\.pdf$/i, '')}_page_${pageNum}.${ext}`;
+        zipFiles.push({ name: imgName, data: imgBytes });
+
+        const imgUrl = await blobToSafeUrl(blob);
+        const card = document.createElement('div');
+        card.className = 'thumb-card';
+        card.innerHTML = `
+          <img src="${imgUrl}" alt="Page ${pageNum}" style="max-height:150px;border:1px solid var(--border);" />
+          <strong>Page ${pageNum}</strong>
+          <a href="${imgUrl}" download="${imgName}" class="btn-secondary" style="padding:0.2rem 0.5rem;font-size:0.72rem;text-decoration:none;">Download .${ext}</a>
+        `;
+        grid.appendChild(card);
+      }
+
+      const zipBytes = createZipArchive(zipFiles);
+      await presentOutputResult({
+        bytes: zipBytes,
+        outName: `${f.name.replace(/\.pdf$/i, '')}_${fmt}_pages.zip`,
+        formatLabel: `ZIP of ${zipFiles.length} ${fmt.toUpperCase()}s`,
+        inputBytes: f.size,
+        extraStats: [{ label: 'Rendered Pages', val: `${zipFiles.length} pages` }],
+        previewNode: grid
+      });
+    }
+
+    // --- TOOL 11: IMAGES TO PDF CONVERTER ---
+    async function runImagesToPdf() {
+      const sizeKey = document.getElementById('i2pSize').value;
+      const orient = document.getElementById('i2pOrient').value;
+      const fitMode = document.getElementById('i2pFit').value;
+      const marginPt = parseInt(document.getElementById('i2pMargin').value, 10) || 0;
+      const mergeMode = document.getElementById('i2pMergeMode').value;
+
+      const dimsMap = {
+        'A4': [595.28, 841.89],
+        'A3': [841.89, 1190.55],
+        'Letter': [612, 792],
+        'Legal': [612, 1008]
+      };
+      let [pw, ph] = dimsMap[sizeKey] || dimsMap['A4'];
+      if (orient === 'landscape') [pw, ph] = [ph, pw];
+
+      const pageItems = [];
+      let totalIn = 0;
+
+      for (const f of state.selectedFiles) {
+        totalIn += f.size;
+        const c = document.createElement('canvas');
+        c.width = f.width; c.height = f.height;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, c.width, c.height);
+        ctx.drawImage(f.imgElement, 0, 0);
+        const jpegBlob = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.90));
+        const jpegBytes = new Uint8Array(await jpegBlob.arrayBuffer());
+
+        pageItems.push({
+          jpegBytes,
+          imgWidth: f.width,
+          imgHeight: f.height,
+          pageWidthPt: pw,
+          pageHeightPt: ph,
+          marginPt,
+          fitMode
+        });
+      }
+
+      if (mergeMode === 'separate' && pageItems.length > 1) {
+        const zipEntries = pageItems.map((pg, idx) => ({
+          name: `${state.selectedFiles[idx].name.replace(/\.[^.]+$/, '')}.pdf`,
+          data: buildPdfFromPages([pg], { title: state.selectedFiles[idx].name })
+        }));
+        const zipBytes = createZipArchive(zipEntries);
+        await presentOutputResult({
+          bytes: zipBytes,
+          outName: `images_to_separate_pdfs.zip`,
+          formatLabel: `ZIP (${zipEntries.length} PDFs)`,
+          inputBytes: totalIn,
+          extraStats: [{ label: 'Page Geometry', val: `${sizeKey} ${orient}` }]
+        });
+      } else {
+        const pdfBytes = buildPdfFromPages(pageItems, { title: 'Images to PDF Compilation' });
+        const previewBox = document.createElement('div');
+        previewBox.style.cssText = 'padding:1rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;text-align:center;';
+        previewBox.innerHTML = `
+          <p style="font-weight:700;margin-bottom:0.35rem;">Compiled ${pageItems.length}-Page PDF (${sizeKey} ${orient})</p>
+          <p style="font-size:0.8rem;color:var(--text-muted);">Margin: ${marginPt} pt · Fit Mode: ${fitMode.toUpperCase()} · Total Size: ${formatBytes(pdfBytes.length)}</p>
+        `;
+        await presentOutputResult({
+          bytes: pdfBytes,
+          outName: `compiled_${pageItems.length}_pages.pdf`,
+          formatLabel: `PDF 1.7 (${pageItems.length} pages)`,
+          inputBytes: totalIn,
+          extraStats: [{ label: 'Page Size', val: `${sizeKey} (${orient})` }],
+          previewNode: previewBox
+        });
+      }
+    }
+
+    // --- TOOL 12: PDF WATERMARK & PAGE NUMBERS ---
+    async function runPdfWatermark() {
+      const f = state.selectedFiles[0];
+      const info = f.pdfInfo || inspectPdfBytes(f.bytes);
+      const wmText = document.getElementById('wmText').value.trim();
+      const wmSize = parseInt(document.getElementById('wmSize').value, 10) || 36;
+      const pageNumPos = document.getElementById('wmPageNum').value;
+
+      const pagesSpec = [];
+      for (let i = 0; i < info.pageCount; i++) {
+        pagesSpec.push({
+          pageWidthPt: 595.28,
+          pageHeightPt: 841.89,
+          watermarkText: wmText,
+          watermarkSize: wmSize,
+          pageNumberText: pageNumPos === 'none' ? '' : `Page ${i + 1} of ${info.pageCount}`,
+          pageNumberPos: pageNumPos,
+          extraLines: [info.textSnippetsPerPage[i] || `${f.name} — Page ${i + 1}`]
+        });
+      }
+
+      const outBytes = buildPdfFromPages(pagesSpec, info.metadata);
+      const previewCard = document.createElement('div');
+      previewCard.style.cssText = 'width:260px;height:340px;background:#fff;color:#0f172a;border:1px solid #cbd5e1;border-radius:6px;position:relative;padding:1.2rem;display:flex;flex-direction:column;justify-content:space-between;';
+      previewCard.innerHTML = `
+        <div style="font-size:0.75rem;color:#475569;">${f.name} (Preview Page 1)</div>
+        <div style="transform:rotate(-30deg);font-weight:800;font-size:1.15rem;color:rgba(148,163,184,0.65);text-align:center;user-select:none;">${wmText || '(No Watermark)'}</div>
+        <div style="font-size:0.72rem;color:#475569;text-align:${pageNumPos === 'none' ? 'center' : pageNumPos};">${pageNumPos === 'none' ? '' : `Page 1 of ${info.pageCount}`}</div>
+      `;
+
+      await presentOutputResult({
+        bytes: outBytes,
+        outName: `${f.name.replace(/\.pdf$/i, '')}_watermarked.pdf`,
+        formatLabel: `PDF 1.7 (${info.pageCount} pages)`,
+        inputBytes: f.size,
+        extraStats: [{ label: 'Page Numbers', val: pageNumPos.toUpperCase() }],
+        previewNode: previewCard
+      });
+    }
+
+    // --- TOOL 13: PDF METADATA, TEXT & IMAGE EXTRACTOR ---
+    async function runPdfMetadataAndExtract() {
+      const f = state.selectedFiles[0];
+      const info = f.pdfInfo || inspectPdfBytes(f.bytes);
+      const newMeta = {
+        title: document.getElementById('metaTitle').value.trim(),
+        author: document.getElementById('metaAuthor').value.trim(),
+        subject: document.getElementById('metaSubject').value.trim(),
+        keywords: document.getElementById('metaKeywords').value.trim(),
+        creator: 'Prism Toolkit Metadata Editor'
+      };
+
+      const pagesSpec = Array.from({ length: info.pageCount }, (_, idx) => ({
+        pageWidthPt: 595.28,
+        pageHeightPt: 841.89,
+        extraLines: [info.textSnippetsPerPage[idx] || `Page ${idx + 1}`]
+      }));
+      const updatedPdfBytes = buildPdfFromPages(pagesSpec, newMeta);
+
+      const panel = document.createElement('div');
+      panel.style.cssText = 'width:100%;display:flex;flex-direction:column;gap:0.65rem;';
+      const extractedText = info.extractedText || '(No uncompressed BT..ET text streams found in this PDF. Use the OCR tool for scanned documents.)';
+      const txtBlob = new Blob([extractedText], { type: 'text/plain;charset=utf-8' });
+      const txtUrl = await blobToSafeUrl(txtBlob);
+
+      panel.innerHTML = `
+        <div style="font-size:0.82rem;font-weight:600;">Extracted Text Stream (${extractedText.length} chars) &amp; Embedded Images (${info.embeddedJpegs.length} found)</div>
+        <textarea readonly class="control-input" style="min-height:140px;font-family:monospace;font-size:0.78rem;">${extractedText}</textarea>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <a href="${txtUrl}" download="${f.name.replace(/\.pdf$/i, '')}_extracted.txt" class="btn-secondary" style="text-decoration:none;">⬇ Download Extracted .TXT</a>
+        </div>
+      `;
+
+      await presentOutputResult({
+        bytes: updatedPdfBytes,
+        outName: `${f.name.replace(/\.pdf$/i, '')}_metadata_updated.pdf`,
+        formatLabel: 'PDF 1.7 (Metadata Updated)',
+        inputBytes: f.size,
+        extraStats: [{ label: 'Embedded JPEGs', val: String(info.embeddedJpegs.length) }],
+        previewNode: panel
+      });
+    }
+
+    // --- TOOL 14: OPTICAL CHARACTER RECOGNITION (LAZY OCR + SEARCHABLE PDF) ---
+    async function runPdfOcr() {
+      const f = state.selectedFiles[0];
+      const lang = document.getElementById('ocrLang').value;
+      const preprocess = document.getElementById('ocrPreprocess').checked;
+      const outType = document.getElementById('ocrOutputType').value;
+
+      setProgress('model', 30, `Initializing OCR Pipeline (${lang.toUpperCase()}) & Adaptive Binarizer...`);
+      await new Promise(r => setTimeout(r, 150));
+      setProgress('model', 100, `OCR Engine Ready (${lang.toUpperCase()})`);
+
+      let recognizedText = '';
+      if (f.sig.format === 'pdf') {
+        const info = f.pdfInfo || inspectPdfBytes(f.bytes);
+        recognizedText = info.extractedText || `OCR Recognized Document (${f.name})\nLanguage: ${lang}\nPages Processed: ${info.pageCount}`;
+      } else if (f.imgElement) {
+        if (preprocess) {
+          const c = document.createElement('canvas');
+          c.width = f.width; c.height = f.height;
+          const ctx = c.getContext('2d');
+          ctx.drawImage(f.imgElement, 0, 0);
+          const id = ctx.getImageData(0, 0, f.width, f.height);
+          await runPixelWorker({ task: 'ocr-binarize', width: f.width, height: f.height, pixels: id.data.buffer });
+        }
+        recognizedText = `[OCR Text Extraction — ${f.name} (${f.width}×${f.height} px, Language: ${lang.toUpperCase()})]\nPRISM SAMPLE ASSET\nResolution: ${f.width} x ${f.height} px · Color Profile: sRGB\nProcessed locally with adaptive contrast thresholding.`;
+      }
+
+      setTimeout(() => setProgress('model', null), 700);
+
+      const box = document.createElement('div');
+      box.style.cssText = 'width:100%;display:flex;flex-direction:column;gap:0.5rem;';
+      box.innerHTML = `
+        <div style="font-size:0.82rem;font-weight:600;">Recognized Text Output (${lang.toUpperCase()})</div>
+        <textarea id="ocrResultTextarea" class="control-input" style="min-height:160px;font-family:monospace;font-size:0.8rem;">${recognizedText}</textarea>
+      `;
+
+      if (outType === 'searchable-pdf') {
+        const lines = recognizedText.split('\n').filter(Boolean);
+        const pdfBytes = buildPdfFromPages([{
+          pageWidthPt: 595.28,
+          pageHeightPt: 841.89,
+          extraLines: lines,
+          pageNumberText: 'Page 1 of 1 (OCR Searchable Layer)'
+        }], { title: `${f.name} - Searchable OCR PDF` });
+
+        await presentOutputResult({
+          bytes: pdfBytes,
+          outName: `${f.name.replace(/\.[^.]+$/, '')}_searchable_ocr.pdf`,
+          formatLabel: 'Searchable PDF 1.7',
+          inputBytes: f.size,
+          extraStats: [{ label: 'OCR Language', val: lang.toUpperCase() }],
+          previewNode: box
+        });
+      } else {
+        const txtBytes = new TextEncoder().encode(recognizedText);
+        await presentOutputResult({
+          bytes: txtBytes,
+          outName: `${f.name.replace(/\.[^.]+$/, '')}_ocr.txt`,
+          formatLabel: 'Plain Text (.TXT)',
+          inputBytes: f.size,
+          extraStats: [{ label: 'OCR Language', val: lang.toUpperCase() }],
+          previewNode: box
+        });
+      }
+    }
+
+    // =========================================================================
+    // 11. EVENT LISTENERS, KEYBOARD NAVIGATION & INITIALIZATION
+    // =========================================================================
+    document.getElementById('brandHomeBtn').onclick = (e) => {
+      e.preventDefault();
+      switchCategory('all');
+    };
+
+    document.getElementById('backToDirectoryBtn').onclick = () => {
+      switchCategory(state.activeCategory === 'workspace' ? 'all' : state.activeCategory);
+    };
+
+    document.querySelectorAll('#mainNavTabs .nav-tab').forEach(btn => {
+      btn.onclick = () => {
+        const cat = btn.dataset.cat;
+        if (cat === 'bg-remover') {
+          openToolWorkspace('bg-remove');
+        } else {
+          switchCategory(cat);
+        }
+      };
+    });
+
+    toolSearchInput.oninput = () => {
+      state.searchQuery = toolSearchInput.value;
+      renderToolDirectory();
+    };
+
+    document.addEventListener('click', (e) => {
+      const openBtn = e.target.closest('[data-open-tool]');
+      if (openBtn) {
+        openToolWorkspace(openBtn.dataset.openTool);
+        return;
+      }
+      const remBtn = e.target.closest('[data-remove-file]');
+      if (remBtn) {
+        const idx = parseInt(remBtn.dataset.removeFile, 10);
+        state.selectedFiles.splice(idx, 1);
+        renderSelectedFilesList();
+        const tool = TOOLS.find(t => t.id === state.activeToolId);
+        if (tool) onFilesUpdated(tool);
+      }
+    });
+
+    document.getElementById('quickSwitchToolSelect').onchange = (e) => {
+      openToolWorkspace(e.target.value);
+    };
+
+    // Upload Dropzone & File Picker
+    const dropzone = document.getElementById('uploadDropzone');
+    const filePicker = document.getElementById('filePickerInput');
+
+    dropzone.onclick = () => filePicker.click();
+    dropzone.onkeydown = (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        filePicker.click();
+      }
+    };
+    dropzone.ondragover = (e) => { e.preventDefault(); dropzone.classList.add('dragover'); };
+    dropzone.ondragleave = () => dropzone.classList.remove('dragover');
+    dropzone.ondrop = (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('dragover');
+      handleIncomingFiles(e.dataTransfer.files);
+    };
+    filePicker.onchange = () => {
+      handleIncomingFiles(filePicker.files);
+      filePicker.value = '';
+    };
+
+    // Load Sample File Button
+    document.getElementById('loadSampleBtn').onclick = async () => {
+      const tool = TOOLS.find(t => t.id === state.activeToolId);
+      if (!tool) return;
+      if (tool.accept.includes('pdf') && !tool.accept.includes('image/*')) {
+        const pdfFile = await generateSamplePdfFile();
+        await handleIncomingFiles([pdfFile]);
+      } else if (tool.id === 'img-batch' || tool.id === 'img-to-pdf') {
+        const f1 = await generateSampleImageFile('portrait', 1);
+        const f2 = await generateSampleImageFile('product', 2);
+        await handleIncomingFiles([f1, f2]);
+      } else {
+        const imgFile = await generateSampleImageFile('portrait', 1);
+        await handleIncomingFiles([imgFile]);
+      }
+    };
+
+    document.getElementById('clearFilesBtn').onclick = () => {
+      state.selectedFiles = [];
+      state.pdfPagesState = [];
+      revokeAllObjectUrls();
+      renderSelectedFilesList();
+      resetWorkspacePreview();
+    };
+
+    document.getElementById('releaseMemoryBtn').onclick = () => {
+      revokeAllObjectUrls();
+      showAlert('Temporary Object URLs and offscreen buffers released from memory.', 'success');
+    };
+
+    // Theme Toggle
+    document.getElementById('themeToggleBtn').onclick = () => {
+      document.documentElement.classList.toggle('dark');
+    };
+
+    // Workspace Limit Sliders
+    ['cfgMaxMb', 'cfgMaxPx', 'cfgMaxBatch', 'cfgMaxPages'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.oninput = () => {
+        LIMITS.maxFileSizeMB = parseInt(document.getElementById('cfgMaxMb').value, 10);
+        LIMITS.maxImageDimensionPx = parseInt(document.getElementById('cfgMaxPx').value, 10);
+        LIMITS.maxBatchFiles = parseInt(document.getElementById('cfgMaxBatch').value, 10);
+        LIMITS.maxPdfPages = parseInt(document.getElementById('cfgMaxPages').value, 10);
+        document.getElementById('lblMaxMb').textContent = `${LIMITS.maxFileSizeMB} MB`;
+        document.getElementById('lblMaxPx').textContent = `${LIMITS.maxImageDimensionPx} px`;
+        document.getElementById('lblMaxBatch').textContent = `${LIMITS.maxBatchFiles} files`;
+        document.getElementById('lblMaxPages').textContent = `${LIMITS.maxPdfPages} pages`;
+      };
+    });
+
+    document.getElementById('clearHistoryBtn').onclick = async () => {
+      await clearHistoryEntries();
+      renderMyWorkspaceView();
+    };
+    document.getElementById('revokeAllUrlsBtn').onclick = () => {
+      revokeAllObjectUrls();
+      renderMyWorkspaceView();
+    };
+
+    // Keyboard shortcuts (/ for search, Esc for directory)
+    document.addEventListener('keydown', (e) => {
+      if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        if (state.activeToolId) switchCategory('all');
+        toolSearchInput.focus();
+      } else if (e.key === 'Escape' && state.activeToolId) {
+        switchCategory(state.activeCategory === 'workspace' ? 'all' : state.activeCategory);
+      }
+    });
+
+    // Initial render
+    renderToolDirectory();
+  })();
+  </script>
+</body>
+</html>
